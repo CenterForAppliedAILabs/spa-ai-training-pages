@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: Devstral Med 2507</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* Custom styles to match US University branding */
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0066cc;
+            --accent-color: #ffcc00;
+            --text-color: #333333;
+            --light-bg: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .header, .footer {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="header py-4">
+        <div class="container mx-auto px-4">
+            <h1 class="text-2xl font-bold">University Admin AI Training: Devstral Med 2507</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- Course Navigation -->
+        <nav class="mb-8">
+            <ul class="flex space-x-4 border-b">
+                <li><a href="#introduction" class="pb-2 border-b-2 border-transparent hover:border-secondary-color">Introduction</a></li>
+                <li><a href="#prompting" class="pb-2 border-b-2 border-transparent hover:border-secondary-color">Prompting Guidance</a></li>
+                <li><a href="#glossary" class="pb-2 border-b-2 border-transparent hover:border-secondary-color">Glossary</a></li>
+                <li><a href="#quiz" class="pb-2 border-b-2 border-transparent hover:border-secondary-color">Quiz</a></li>
+                <li><a href="#llm-tools" class="pb-2 border-b-2 border-transparent hover:border-secondary-color">LLM Tools</a></li>
+            </ul>
+        </nav>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-4 text-primary-color">Introduction to University Admin AI Training: Devstral Med 2507</h2>
+            <div class="card">
+                <p class="mb-4">Welcome to this beginner's course on Artificial Intelligence (AI) designed specifically for university administrators. This course will help you understand AI concepts, learn effective prompting techniques, and explore practical applications in higher education.</p>
+                <p>By the end of this course, you'll be able to:</p>
+                <ul class="list-disc list-inside mt-2">
+                    <li>Understand basic AI concepts and terminology</li>
+                    <li>Create effective prompts for different university departments</li>
+                    <li>Identify AI use cases in higher education</li>
+                    <li>Get started with popular LLM chat tools</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Prompting Guidance Section -->
+        <section id="prompting" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-4 text-primary-color">Prompting Guidance for University Departments</h2>
+            <p class="mb-4">Effective prompting is key to getting useful results from AI. Below are examples from various department perspectives using an Ok/Good/Better format.</p>
+
+            <!-- Department Tabs -->
+            <div class="mb-4">
+                <button class="department-tab btn-primary active" data-department="admissions">Admissions</button>
+                <button class="department-tab btn-primary" data-department="financial-aid">Financial Aid</button>
+                <button class="department-tab btn-primary" data-department="registrar">Registrar</button>
+                <button class="department-tab btn-primary" data-department="it">IT Services</button>
+            </div>
+
+            <!-- Department Content -->
+            <div id="admissions" class="department-content card">
+                <h3 class="text-xl font-semibold mb-3">Admissions Department</h3>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Ok:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>What are some ways to improve student recruitment?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Good:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>What are five effective strategies to increase undergraduate applications from diverse backgrounds?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example">
+                    <div class="font-semibold">Better:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>As a university admissions officer, I need to develop a targeted outreach plan to increase applications from first-generation college students in rural areas. What are the top 3 evidence-based strategies I should implement, and what specific tactics could I use for each strategy? Please provide examples of successful programs from other universities.</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other department content will be added similarly -->
+            <div id="financial-aid" class="department-content card hidden">
+                <h3 class="text-xl font-semibold mb-3">Financial Aid Department</h3>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Ok:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>How can we help students with financial aid?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Good:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>What are some ways to improve financial aid communication with students?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example">
+                    <div class="font-semibold">Better:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>As a financial aid administrator, I need to create a communication plan to ensure students understand their aid packages and deadlines. What are the most effective channels (email, text, portal) for reaching different student populations, and what key messages should be included in each communication? Please provide a sample timeline for the academic year.</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="registrar" class="department-content card hidden">
+                <h3 class="text-xl font-semibold mb-3">Registrar's Office</h3>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Ok:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>How can we improve course registration?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Good:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>What are some strategies to reduce registration bottlenecks?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example">
+                    <div class="font-semibold">Better:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>As a university registrar, I need to optimize our course registration system to handle 10,000 students efficiently. What are the top 3 process improvements I should implement, considering both technical solutions and policy changes? Please provide examples of successful registration systems from other universities of similar size.</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="it" class="department-content card hidden">
+                <h3 class="text-xl font-semibold mb-3">IT Services</h3>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Ok:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>How can we improve campus IT?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example mb-4">
+                    <div class="font-semibold">Good:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>What are some ways to enhance cybersecurity on campus?</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+                <div class="prompt-example">
+                    <div class="font-semibold">Better:</div>
+                    <div class="bg-gray-100 p-3 rounded copyable">
+                        <code>As a university IT director, I need to develop a comprehensive cybersecurity strategy to protect student data and research information. What are the top 5 security measures I should prioritize, and what specific technologies or protocols should I implement for each? Please provide a roadmap for implementation over the next 12 months.</code>
+                        <button class="copy-btn float-right text-sm bg-gray-200 px-2 py-1 rounded">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Glossary Section -->
+        <section id="glossary" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-4 text-primary-color">AI Glossary</h2>
+            <div class="card">
+                <p class="mb-4">Familiarize yourself with these important AI terms:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <strong>1. Artificial Intelligence (AI):</strong> The simulation of human intelligence processes by machines.
+                    </div>
+                    <div>
+                        <strong>2. Machine Learning (ML):</strong> A subset of AI that involves training algorithms to learn from data.
+                    </div>
+                    <div>
+                        <strong>3. Natural Language Processing (NLP):</strong> AI's ability to understand and generate human language.
+                    </div>
+                    <div>
+                        <strong>4. Large Language Model (LLM):</strong> Advanced AI models trained on vast amounts of text data.
+                    </div>
+                    <div>
+                        <strong>5. Prompt Engineering:</strong> The art of crafting effective input for AI models.
+                    </div>
+                    <div>
+                        <strong>6. Hallucination:</strong> When AI generates false or misleading information.
+                    </div>
+                    <div>
+                        <strong>7. Fine-tuning:</strong> Adapting a pre-trained model to specific tasks.
+                    </div>
+                    <div>
+                        <strong>8. Embeddings:</strong> Numerical representations of text that capture semantic meaning.
+                    </div>
+                    <div>
+                        <strong>9. Token:</strong> A unit of text (word or subword) processed by AI models.
+                    </div>
+                    <div>
+                        <strong>10. Context Window:</strong> The amount of text an AI model can process at once.
+                    </div>
+                    <div>
+                        <strong>11. Generative AI:</strong> AI that can create new content like text, images, or code.
+                    </div>
+                    <div>
+                        <strong>12. Supervised Learning:</strong> Training AI with labeled data.
+                    </div>
+                    <div>
+                        <strong>13. Unsupervised Learning:</strong> Training AI to find patterns in unlabeled data.
+                    </div>
+                    <div>
+                        <strong>14. Reinforcement Learning:</strong> Training AI through trial and error with rewards.
+                    </div>
+                    <div>
+                        <strong>15. Transfer Learning:</strong> Applying knowledge from one task to another.
+                    </div>
+                    <div>
+                        <strong>16. Bias:</strong> Systematic errors in AI outputs due to flawed training data.
+                    </div>
+                    <div>
+                        <strong>17. Overfitting:</strong> When AI performs well on training data but poorly on new data.
+                    </div>
+                    <div>
+                        <strong>18. Underfitting:</strong> When AI is too simple to capture data patterns.
+                    </div>
+                    <div>
+                        <strong>19. Inference:</strong> The process of generating predictions from a trained model.
+                    </div>
+                    <div>
+                        <strong>20. Ground Truth:</strong> The objective reality used to train and evaluate AI models.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-4 text-primary-color">AI Knowledge Quiz</h2>
+            <div class="card">
+                <p class="mb-4">Test your knowledge with this 20-question quiz:</p>
+                <div id="quiz-container">
+                    <!-- Quiz questions will be loaded here by JavaScript -->
+                </div>
+                <button id="submit-quiz" class="btn-primary mt-4">Submit Answers</button>
+                <div id="quiz-results" class="mt-4 hidden"></div>
+            </div>
+        </section>
+
+        <!-- LLM Tools Section -->
+        <section id="llm-tools" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-4 text-primary-color">Getting Started with LLM Chat Tools</h2>
+            <div class="card">
+                <p class="mb-4">Here are some popular LLM chat tools to explore:</p>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold">1. ChatGPT</h3>
+                        <p>Developed by OpenAI, ChatGPT is one of the most popular AI chat tools. It's great for general knowledge questions, writing assistance, and creative tasks.</p>
+                        <a href="https://chat.openai.com" target="_blank" class="text-secondary-color hover:underline">Try ChatGPT</a>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">2. Google Bard</h3>
+                        <p>Google's AI chat tool that integrates with Google services and provides up-to-date information from the web.</p>
+                        <a href="https://bard.google.com" target="_blank" class="text-secondary-color hover:underline">Try Google Bard</a>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">3. Microsoft Copilot</h3>
+                        <p>Integrated with Microsoft 365, Copilot helps with productivity tasks like email drafting, document creation, and data analysis.</p>
+                        <a href="https://www.microsoft.com/copilot" target="_blank" class="text-secondary-color hover:underline">Try Microsoft Copilot</a>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">4. Anthropic's Claude</h3>
+                        <p>A conversational AI focused on safety and helpfulness, good for complex reasoning tasks.</p>
+                        <a href="https://www.anthropic.com" target="_blank" class="text-secondary-color hover:underline">Learn about Claude</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2023 US University. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript will go here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Department tab functionality
+            const departmentTabs = document.querySelectorAll('.department-tab');
+            const departmentContents = document.querySelectorAll('.department-content');
+
+            departmentTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    departmentTabs.forEach(t => t.classList.remove('active'));
+                    // Hide all content
+                    departmentContents.forEach(c => c.classList.add('hidden'));
+
+                    // Activate clicked tab
+                    this.classList.add('active');
+                    // Show corresponding content
+                    const department = this.getAttribute('data-department');
+                    document.getElementById(department).classList.remove('hidden');
+                });
+            });
+
+            // Copy button functionality
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-btn')) {
+                    const codeElement = e.target.previousElementSibling;
+                    const textToCopy = codeElement.textContent;
+                    
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        e.target.textContent = 'Copied!';
+                        setTimeout(() => {
+                            e.target.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                }
+            });
+
+            // Quiz functionality
+            const quizQuestions = [
+                {
+                    question: "What does AI stand for?",
+                    options: ["Artificial Intelligence", "Advanced Integration", "Automated Information", "Algorithmic Interface"],
+                    answer: 0
+                },
+                {
+                    question: "Which is NOT a type of machine learning?",
+                    options: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning", "Manual Learning"],
+                    answer: 3
+                },
+                {
+                    question: "What is prompt engineering?",
+                    options: [
+                        "Designing AI hardware",
+                        "Crafting effective input for AI models",
+                        "Programming AI algorithms",
+                        "Training AI models"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "Which term describes AI generating false information?",
+                    options: ["Hallucination", "Overfitting", "Underfitting", "Bias"],
+                    answer: 0
+                },
+                {
+                    question: "What is a large language model (LLM)?",
+                    options: [
+                        "A small AI model",
+                        "A model trained on vast amounts of text",
+                        "A model that only understands numbers",
+                        "A model that can't generate text"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "Which is NOT a common AI application in universities?",
+                    options: [
+                        "Student chatbots",
+                        "Predictive analytics for retention",
+                        "Automated essay grading",
+                        "Physical classroom construction"
+                    ],
+                    answer: 3
+                },
+                {
+                    question: "What does NLP stand for?",
+                    options: [
+                        "Natural Language Processing",
+                        "Neural Learning Protocol",
+                        "Network Language Program",
+                        "Numerical Logic Processing"
+                    ],
+                    answer: 0
+                },
+                {
+                    question: "Which term refers to the amount of text an AI can process at once?",
+                    options: ["Context Window", "Token Limit", "Memory Size", "Processing Capacity"],
+                    answer: 0
+                },
+                {
+                    question: "What is fine-tuning in AI?",
+                    options: [
+                        "Adjusting hardware settings",
+                        "Adapting a model to specific tasks",
+                        "Deleting training data",
+                        "Changing the AI's name"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "Which is a potential risk of AI in education?",
+                    options: [
+                        "Increased efficiency",
+                        "Bias in decision-making",
+                        "24/7 availability",
+                        "Personalized learning"
+                    ],
+                    answer: 1
+                }
+            ];
+
+            // Generate quiz questions
+            const quizContainer = document.getElementById('quiz-container');
+            quizQuestions.forEach((q, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'quiz-question mb-4';
+                questionElement.innerHTML = `
+                    <p class="font-semibold mb-2">${index + 1}. ${q.question}</p>
+                    ${q.options.map((option, i) => `
+                        <label class="block mb-1">
+                            <input type="radio" name="q${index}" value="${i}">
+                            ${option}
+                        </label>
+                    `).join('')}
+                `;
+                quizContainer.appendChild(questionElement);
+            });
+
+            // Quiz submission
+            document.getElementById('submit-quiz').addEventListener('click', function() {
+                let score = 0;
+                quizQuestions.forEach((q, index) => {
+                    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                    if (selected && parseInt(selected.value) === q.answer) {
+                        score++;
+                    }
+                });
+
+                const resultElement = document.getElementById('quiz-results');
+                resultElement.innerHTML = `You scored ${score} out of ${quizQuestions.length} (${Math.round((score/quizQuestions.length)*100)}%)`;
+                resultElement.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

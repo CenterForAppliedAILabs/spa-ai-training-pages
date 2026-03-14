@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: MiniMax M21</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* 
+        ========================================
+        UNIVERSITY THEME CUSTOMIZATION
+        Edit these CSS variables to customize the university theme
+        ========================================
+        */
+        :root {
+            --primary-color: #1e3a5f;      /* University Blue */
+            --secondary-color: #c9a227;    /* University Gold */
+            --accent-color: #2c5282;       /* Lighter Blue */
+            --text-dark: #1a202c;          /* Dark Text */
+            --text-light: #4a5568;         /* Light Text */
+            --bg-light: #f7fafc;           /* Light Background */
+            --bg-white: #ffffff;           /* White Background */
+        }
+
+        /* Typography */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Custom Color Classes */
+        .bg-university-blue { background-color: var(--primary-color); }
+        .bg-university-gold { background-color: var(--secondary-color); }
+        .text-university-blue { color: var(--primary-color); }
+        .text-university-gold { color: var(--secondary-color); }
+        .border-university-blue { border-color: var(--primary-color); }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation Active State */
+        .nav-link.active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        /* Card Hover Effects */
+        .course-card {
+            transition: all 0.3s ease;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Prompt Example Box Styles */
+        .prompt-box {
+            transition: all 0.2s ease;
+        }
+        
+        .prompt-box:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Copy Button Animation */
+        .copy-btn.copied {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .quiz-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(30, 58, 95, 0.1);
+        }
+        
+        .quiz-option.correct {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Section Headers */
+        .section-header {
+            position: relative;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+
+        /* Glossary Term Styling */
+        .glossary-term {
+            border-left: 4px solid var(--secondary-color);
+            transition: all 0.2s ease;
+        }
+        
+        .glossary-term:hover {
+            border-left-width: 6px;
+            background-color: #f8fafc;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-nav.open {
+            transform: translateX(0);
+        }
+
+        /* Badge Styles */
+        .badge-ok { background: #fef3c7; color: #92400e; }
+        .badge-good { background: #dbeafe; color: #1e40af; }
+        .badge-better { background: #d1fae5; color: #065f46; }
+
+        /* Tool Card */
+        .tool-card {
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            border-color: var(--secondary-color);
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print { display: none !important; }
+            .break-inside-avoid { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    
+    <!-- ========================================
+         HEADER / NAVIGATION
+         Edit class="bg-university-blue" to change header color
+    ======================================== -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-university-blue shadow-lg">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <i class="ph ph-graduation-cap text-3xl text-university-gold"></i>
+                    <div>
+                        <span class="text-white font-semibold text-lg">USU</span>
+                        <p class="text-slate-300 text-xs">AI Academy</p>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#overview" class="nav-link text-white hover:text-university-gold px-3 py-2 text-sm font-medium transition-colors">Overview</a>
+                    <a href="#getting-started" class="nav-link text-white hover:text-university-gold px-3 py-2 text-sm font-medium transition-colors">Getting Started</a>
+                    <a href="#prompts" class="nav-link text-white hover:text-university-gold px-3 py-2 text-sm font-medium transition-colors">Prompt Library</a>
+                    <a href="#glossary" class="nav-link text-white hover:text-university-gold px-3 py-2 text-sm font-medium transition-colors">Glossary</a>
+                    <a href="#quiz" class="nav-link text-white hover:text-university-gold px-3 py-2 text-sm font-medium transition-colors">Quiz</a>
+                    <button onclick="window.print()" class="bg-university-gold hover:bg-yellow-500 text-university-blue px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                        <i class="ph ph-printer"></i> Print
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-nav" class="mobile-nav fixed inset-y-0 right-0 w-64 bg-university-blue shadow-xl md:hidden">
+            <div class="p-4">
+                <button id="mobile-menu-close" class="text-white absolute top-4 right-4">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+                <div class="mt-8 space-y-4">
+                    <a href="#overview" class="nav-link block text-white hover:text-university-gold px-3 py-2 text-base font-medium">Overview</a>
+                    <a href="#getting-started" class="nav-link block text-white hover:text-university-gold px-3 py-2 text-base font-medium">Getting Started</a>
+                    <a href="#prompts" class="nav-link block text-white hover:text-university-gold px-3 py-2 text-base font-medium">Prompt Library</a>
+                    <a href="#glossary" class="nav-link block text-white hover:text-university-gold px-3 py-2 text-base font-medium">Glossary</a>
+                    <a href="#quiz" class="nav-link block text-white hover:text-university-gold px-3 py-2 text-base font-medium">Quiz</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================
+         HERO SECTION
+         Edit background gradient in style attribute
+    ======================================== -->
+    <section class="hero-section relative min-h-screen flex items-center justify-center text-center pt-16" 
+             style="background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 50%, #1e3a5f 100%);">
+        <!-- Decorative Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-university-gold opacity-5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-400 opacity-5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+                <i class="ph ph-robot text-university-gold"></i>
+                <span class="text-white text-sm font-medium">MiniMax M21 AI Training</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                University Admin AI Training:
+                <span class="text-university-gold">MiniMax M21</span>
+            </h1>
+            
+            <p class="text-xl text-slate-200 mb-8 max-w-3xl mx-auto">
+                Powered by MiniMax M21
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#getting-started" class="bg-university-gold hover:bg-yellow-500 text-university-blue px-8 py-3 rounded-lg text-lg font-semibold transition-colors flex items-center gap-2">
+                    <i class="ph ph-rocket-launch"></i> Start Learning
+                </a>
+                <a href="#quiz" class="bg-transparent border-2 border-white hover:bg-white/10 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors flex items-center gap-2">
+                    <i class="ph ph-clipboard-text"></i> Take Quiz
+                </a>
+            </div>
+            
+            <!-- Course Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-8 border-t border-white/20">
+                <div>
+                    <p class="text-3xl font-bold text-university-gold">20+</p>
+                    <p class="text-slate-300 text-sm">Prompts Included</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-university-gold">8</p>
+                    <p class="text-slate-300 text-sm">Departments</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-university-gold">20</p>
+                    <p class="text-slate-300 text-sm">Quiz Questions</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-university-gold">25+</p>
+                    <p class="text-slate-300 text-sm">Glossary Terms</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         COURSE OVERVIEW SECTION
+    ======================================== -->
+    <section id="overview" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="section-header text-3xl md:text-4xl font-bold text-university-blue inline-block pb-4">Course Overview</h2>
+                <p class="text-slate-600 mt-6 max-w-3xl mx-auto">What you'll learn in this comprehensive guide to AI for higher education administration.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Learning Objective Cards -->
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-brain text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Understanding AI Basics</h3>
+                    <p class="text-slate-600">Learn the fundamentals of Large Language Models (LLMs), how they work, and their applications in education.</p>
+                </div>
+                
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-chats-circle text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Effective Prompting</h3>
+                    <p class="text-slate-600">Master the art of crafting effective prompts with our Ok/Good/Better framework across multiple departments.</p>
+                </div>
+                
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-buildings text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Department-Specific Use</h3>
+                    <p class="text-slate-600">Discover AI applications tailored for Admissions, IT, HR, Finance, Student Affairs, and more.</p>
+                </div>
+                
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-shield-check text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Ethics & Privacy</h3>
+                    <p class="text-slate-600">Understand data privacy, FERPA compliance, and ethical considerations for AI in education.</p>
+                </div>
+                
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-toolbox text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Practical Tools</h3>
+                    <p class="text-slate-600">Get hands-on with popular AI tools like ChatGPT, Claude, and Gemini with step-by-step guides.</p>
+                </div>
+                
+                <div class="course-card bg-slate-50 rounded-xl p-6 border border-slate-200">
+                    <div class="w-12 h-12 bg-university-blue rounded-lg flex items-center justify-center mb-4">
+                        <i class="ph ph-certificate text-2xl text-university-gold"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-university-blue mb-2">Assessment & Certification</h3>
+                    <p class="text-slate-600">Test your knowledge with our comprehensive quiz and earn a certificate of completion.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         GETTING STARTED SECTION
+    ======================================== -->
+    <section id="getting-started" class="py-20 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="section-header text-3xl md:text-4xl font-bold text-university-blue inline-block pb-4">Getting Started with LLM Chat Tools</h2>
+                <p class="text-slate-600 mt-6 max-w-3xl mx-auto">Learn how to access and use the most popular AI chat tools for administrative tasks.</p>
+            </div>
+            
+            <!-- Tool Cards -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- ChatGPT -->
+                <div class="tool-card bg-white rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="ph ph-chat-circle-text text-2xl text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-slate-800">ChatGPT</h3>
+                            <p class="text-sm text-slate-500">by OpenAI</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">The most widely used AI assistant. Great for general tasks, document analysis, and creative writing.</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Free tier available</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>GPT-4 for Plus subscribers</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Code interpreter included</span>
+                        </div>
+                    </div>
+                    <a href="https://chat.openai.com" target="_blank" class="mt-4 block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        Visit ChatGPT
+                    </a>
+                </div>
+                
+                <!-- Claude -->
+                <div class="tool-card bg-white rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                            <i class="ph ph-sparkle text-2xl text-amber-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-slate-800">Claude</h3>
+                            <p class="text-sm text-slate-500">by Anthropic</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">Excellent for long documents and analysis. Known for thoughtful, nuanced responses.</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Free tier available</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Large context window</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Strong analytical skills</span>
+                        </div>
+                    </div>
+                    <a href="https://claude.ai" target="_blank" class="mt-4 block text-center bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        Visit Claude
+                    </a>
+                </div>
+                
+                <!-- Gemini -->
+                <div class="tool-card bg-white rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="ph ph-sparkle text-2xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-slate-800">Gemini</h3>
+                            <p class="text-sm text-slate-500">by Google</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">Integrated with Google Workspace. Great for research and information retrieval.</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Free tier available</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Google integration</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i class="ph ph-check-circle text-green-500"></i>
+                            <span>Multi-modal support</span>
+                        </div>
+                    </div>
+                    <a href="https://gemini.google.com" target="_blank" class="mt-4 block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        Visit Gemini
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Getting Started Steps -->
+            <div class="bg-white rounded-xl p-8 border border-slate-200">
+                <h3 class="text-xl font-semibold text-university-blue mb-6">Quick Start Guide</h3>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-university-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl font-bold text-university-gold">1</span>
+                        </div>
+                        <h4 class="font-medium text-slate-800 mb-2">Create Account</h4>
+                        <p class="text-sm text-slate-600">Sign up with your university email for potential institutional access.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-university-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl font-bold text-university-gold">2</span>
+                        </div>
+                        <h4 class="font-medium text-slate-800 mb-2">Review Policies</h4>
+                        <p class="text-sm text-slate-600">Check your institution's AI usage guidelines before proceeding.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-university-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl font-bold text-university-gold">3</span>
+                        </div>
+                        <h4 class="font-medium text-slate-800 mb-2">Start Small</h4>
+                        <p class="text-sm text-slate-600">Begin with simple tasks like summarization before complex workflows.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-university-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl font-bold text-university-gold">4</span>
+                        </div>
+                        <h4 class="font-medium text-slate-800 mb-2">Iterate & Learn</h4>
+                        <p class="text-sm text-slate-600">Refine your prompts based on results. Practice makes perfect.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         PROMPT LIBRARY SECTION
+    ======================================== -->
+    <section id="prompts" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="section-header text-3xl md:text-4xl font-bold text-university-blue inline-block pb-4">Prompt Library by Department</h2>
+                <p class="text-slate-600 mt-6 max-w-3xl mx-auto">Explore effective prompts organized by department. Each example shows progression from basic to optimal.</p>
+            </div>
+            
+            <!-- Department Tabs -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+                <button onclick="showDepartment('admissions')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-university-blue text-white" data-dept="admissions">Admissions</button>
+                <button onclick="showDepartment('it')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="it">IT Services</button>
+                <button onclick="showDepartment('finance')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="finance">Finance</button>
+                <button onclick="showDepartment('hr')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="hr">Human Resources</button>
+                <button onclick="showDepartment('academic')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="academic">Academic Affairs</button>
+                <button onclick="showDepartment('studentaffairs')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="studentaffairs">Student Affairs</button>
+                <button onclick="showDepartment('research')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="research">Research Office</button>
+                <button onclick="showDepartment('marketing')" class="dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white" data-dept="marketing">Marketing</button>
+            </div>
+            
+            <!-- Prompt Content Container -->
+            <div id="prompt-content" class="space-y-8">
+                <!-- Content will be dynamically loaded -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         GLOSSARY SECTION
+    ======================================== -->
+    <section id="glossary" class="py-20 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="section-header text-3xl md:text-4xl font-bold text-university-blue inline-block pb-4">AI Glossary for Administrators</h2>
+                <p class="text-slate-600 mt-6 max-w-3xl mx-auto">Essential terminology every university administrator should understand.</p>
+            </div>
+            
+            <!-- Search and Filter -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <div class="relative flex-1">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="glossary-search" placeholder="Search terms..." 
+                           class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-university-blue focus:border-university-blue">
+                </div>
+                <select id="glossary-filter" class="px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-university-blue focus:border-university-blue">
+                    <option value="all">All Categories</option>
+                    <option value="basics">AI Basics</option>
+                    <option value="technical">Technical</option>
+                    <option value="ethics">Ethics & Privacy</option>
+                    <option value="education">Education-Specific</option>
+                </select>
+            </div>
+            
+            <!-- Glossary Grid -->
+            <div id="glossary-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Glossary items will be dynamically rendered -->
+            </div>
+            
+            <div id="no-results" class="hidden text-center py-12 text-slate-500">
+                <i class="ph ph-magnifying-glass text-4xl mb-4"></i>
+                <p>No terms found matching your search.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         QUIZ SECTION
+    ======================================== -->
+    <section id="quiz" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="section-header text-3xl md:text-4xl font-bold text-university-blue inline-block pb-4">Knowledge Check Quiz</h2>
+                <p class="text-slate-600 mt-6">Test your understanding of AI in higher education administration.</p>
+            </div>
+            
+            <!-- Quiz Progress -->
+            <div id="quiz-progress" class="mb-8">
+                <div class="flex justify-between text-sm text-slate-600 mb-2">
+                    <span>Question <span id="current-q">1</span> of <span id="total-q">20</span></span>
+                    <span>Score: <span id="score">0</span>/<span id="questions-answered">0</span></span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div id="progress-bar" class="progress-bar bg-university-blue h-2 rounded-full" style="width: 5%"></div>
+                </div>
+            </div>
+            
+            <!-- Quiz Card -->
+            <div id="quiz-card" class="bg-slate-50 rounded-xl p-8 border border-slate-200">
+                <!-- Question will be rendered here -->
+            </div>
+            
+            <!-- Quiz Navigation -->
+            <div id="quiz-nav" class="flex justify-between mt-6">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2 bg-university-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next Question
+                </button>
+            </div>
+            
+            <!-- Quiz Results -->
+            <div id="quiz-results" class="hidden text-center py-12">
+                <div class="w-24 h-24 bg-university-blue rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="ph ph-trophy text-5xl text-university-gold"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-university-blue mb-2">Quiz Complete!</h3>
+                <p class="text-slate-600 mb-6">You scored <span id="final-score" class="font-bold text-university-blue">0</span> out of <span id="max-score">20</span></p>
+                <div id="score-message" class="text-lg font-medium mb-8"></div>
+                <button onclick="resetQuiz()" class="px-8 py-3 bg-university-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors">
+                    Retake Quiz
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         FOOTER
+    ======================================== -->
+    <footer class="bg-university-blue text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="ph ph-graduation-cap text-3xl text-university-gold"></i>
+                        <div>
+                            <span class="text-xl font-bold">USU AI Academy</span>
+                            <p class="text-slate-300 text-sm">Empowering Higher Education</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-sm max-w-md">
+                        This course provides university administrators with practical knowledge and tools 
+                        to leverage AI for improved institutional efficiency and student success.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Course Sections</h4>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li><a href="#overview" class="hover:text-university-gold transition-colors">Overview</a></li>
+                        <li><a href="#getting-started" class="hover:text-university-gold transition-colors">Getting Started</a></li>
+                        <li><a href="#prompts" class="hover:text-university-gold transition-colors">Prompt Library</a></li>
+                        <li><a href="#glossary" class="hover:text-university-gold transition-colors">Glossary</a></li>
+                        <li><a href="#quiz" class="hover:text-university-gold transition-colors">Quiz</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li><a href="https://chat.openai.com" target="_blank" class="hover:text-university-gold transition-colors">ChatGPT</a></li>
+                        <li><a href="https://claude.ai" target="_blank" class="hover:text-university-gold transition-colors">Claude</a></li>
+                        <li><a href="https://gemini.google.com" target="_blank" class="hover:text-university-gold transition-colors">Gemini</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-600 pt-8 text-center text-slate-400 text-sm">
+                <p>© 2024 USU AI Academy. All rights reserved. | MiniMax M21 AI Training for Higher Education</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================
+         JAVASCRIPT CODE
+         Edit quiz questions, glossary terms, and prompt content below
+    ======================================== -->
+    <script>
+        /* 
+        ========================================
+        PROMPT LIBRARY DATA
+        Add or edit prompts for each department here
+        ========================================
+        */
+        const promptData = {
+            admissions: {
+                title: "Admissions Office",
+                description: "Prompts for application review, communications, and enrollment processing.",
+                color: "blue",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Review Applications",
+                        prompt: "Review these student applications and tell me which ones are qualified."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Detailed Application Analysis",
+                        prompt: "Review these 10 transfer applications and evaluate each based on: academic performance (GPA trends), course rigor, personal statement quality, and extracurricular achievements. Rank them from most to least qualified and explain your reasoning for each."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Comprehensive Admissions Review",
+                        prompt: "You are an experienced admissions officer at a selective university. Review these 15 freshman applications and create a comprehensive evaluation report. For each candidate, assess: 1) Academic fit (GPA, course rigor, test scores context), 2) Personal qualities (leadership, resilience, growth potential), 3) Contribution to campus diversity, 4) Fit with our institutional values. Provide a holistic admission recommendation (Accept, Waitlist, Deny) with a detailed rationale. Additionally, identify 3 candidates who might be strong scholarship recipients based on exceptional achievements."
+                    }
+                ]
+            },
+            it: {
+                title: "IT Services",
+                description: "Prompts for technical support, documentation, and system management.",
+                color: "green",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Help Desk Response",
+                        prompt: "Write a response to a student having trouble logging into their account."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Detailed Troubleshooting Guide",
+                        prompt: "A student cannot log into the student portal. They see 'invalid credentials' error. Write a step-by-step troubleshooting guide that includes: password reset instructions, browser cache clearing, checking caps lock, and how to contact support if issues persist."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Comprehensive IT Documentation",
+                        prompt: "Create a comprehensive technical documentation package for our university's single sign-on (SSO) system. Include: 1) System overview and architecture diagram description, 2) Common error messages with troubleshooting procedures, 3) Self-service password reset workflow, 4) FAQ for students, faculty, and staff, 5) Escalation procedures for complex issues, 6) Security best practices. Write in clear, non-technical language appropriate for all university stakeholders."
+                    }
+                ]
+            },
+            finance: {
+                title: "Finance & Budget",
+                description: "Prompts for budget analysis, reporting, and financial planning.",
+                color: "amber",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Budget Summary",
+                        prompt: "Summarize this budget report for the executive team."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Budget Analysis",
+                        prompt: "Analyze our department's budget vs. actual spending for Q3. Identify variances over 10%, explain potential causes, and suggest three areas where we could reduce costs without impacting essential operations."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Comprehensive Financial Report",
+                        prompt: "As a university CFO, create a comprehensive FY2024 mid-year financial report that includes: 1) Executive summary with key metrics, 2) Revenue analysis by source (tuition, grants, donations, auxiliary), 3) Expense breakdown by department with variance analysis, 4) Budget variance highlights (>5% deviations), 5) Cash flow analysis and projections, 6) Recommendations for Q3-Q4 resource allocation, 7) Risk assessment and mitigation strategies. Include tables where data would benefit from visualization."
+                    }
+                ]
+            },
+            hr: {
+                title: "Human Resources",
+                description: "Prompts for recruitment, employee relations, and policy development.",
+                color: "red",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Job Description",
+                        prompt: "Write a job description for an administrative coordinator."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Detailed Position Description",
+                        prompt: "Write a comprehensive job description for a Senior Academic Advisor position. Include: position summary, key responsibilities (5-7 bullet points), qualifications (required and preferred), working conditions, and benefits overview. Use inclusive language and follow higher education standards."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Full Recruitment Package",
+                        prompt: "Create a complete recruitment package for a Director of Student Success position including: 1) Position profile with strategic context, 2) Comprehensive job description with competency framework, 3) Minimum qualifications with justification, 4) Preferred candidate profile, 5) Interview rubric with scoring criteria, 6) Diversity and inclusion statement, 7) Salary range and benefits overview, 8) Application instructions and timeline. Target a R1 research university context."
+                    }
+                ]
+            },
+            academic: {
+                title: "Academic Affairs",
+                description: "Prompts for curriculum development, faculty support, and academic policy.",
+                color: "indigo",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Syllabus Feedback",
+                        prompt: "Review this course syllabus and give me feedback."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Syllabus Review",
+                        prompt: "Review this Introduction to Data Science syllabus for a freshman-level course. Evaluate: learning outcomes clarity, assessment alignment, course schedule organization, and accessibility. Provide specific suggestions for improvement in each area."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Comprehensive Course Design",
+                        prompt: "Act as a curriculum design expert. Create a comprehensive course development guide for a new undergraduate course in 'AI Ethics in Society.' Include: 1) Course rationale and alignment with institutional mission, 3-4 measurable learning outcomes using Bloom's taxonomy, 2) Weekly schedule with topics, readings, and activities, 3) Assessment strategy with rubrics for: participation, reflection papers, group project, final presentation, 4) Accessibility and inclusivity considerations, 5) Policy statements (attendance, academic integrity, accommodations), 6) Resource recommendations for students and faculty."
+                    }
+                ]
+            },
+            studentaffairs: {
+                title: "Student Affairs",
+                description: "Prompts for student support, programming, and wellness resources.",
+                color: "pink",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Welcome Email",
+                        prompt: "Write a welcome email to new students starting next semester."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Onboarding Communication Series",
+                        prompt: "Create a 5-email sequence for new student onboarding. Include: 1) Welcome and what to expect, 2) Housing and move-in information, 3) Academic preparation tips, 4) Campus resources overview, 5) Countdown to arrival. Make each email engaging, informative, and action-oriented."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Comprehensive Student Success Program",
+                        prompt: "Develop a comprehensive transition program for first-generation college students. Include: 1) Pre-arrival communication strategy, 2) Welcome week programming with specific session descriptions, 3) Peer mentorship program structure, 4) Academic success workshop series, 5) Social integration activities, 6) Early warning system for at-risk students, 7) Family engagement component, 8) Assessment metrics for program evaluation. Frame this as a scalable program for 500+ incoming students."
+                    }
+                ]
+            },
+            research: {
+                title: "Research Office",
+                description: "Prompts for grant writing, compliance, and research administration.",
+                color: "cyan",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Grant Summary",
+                        prompt: "Summarize this grant proposal for the review committee."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Grant Review Feedback",
+                        prompt: "Review this NSF grant proposal abstract and specific aims. Evaluate: clarity of objectives, methodology soundness, significance and innovation, and feasibility. Provide constructive feedback for strengthening the proposal before submission."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "NIH R01 Grant Framework",
+                        prompt: "As a research development specialist, create a comprehensive framework for an NIH R01 grant proposal in educational technology. Include: 1) Abstract template with required sections, 2) Specific aims template with example content, 3) Significance section outline with guiding questions, 4) Innovation section with examples of strong language, 5) Approach section with methodology considerations, 6) Common pitfalls to avoid, 7) Budget justification framework. Target the Educational Sciences (84.305) division."
+                    }
+                ]
+            },
+            marketing: {
+                title: "Marketing & Communications",
+                description: "Prompts for content creation, social media, and brand management.",
+                color: "violet",
+                prompts: [
+                    {
+                        level: "ok",
+                        badge: "OK - Basic",
+                        badgeClass: "badge-ok",
+                        title: "Social Post",
+                        prompt: "Write a social media post about our upcoming open house."
+                    },
+                    {
+                        level: "good",
+                        badge: "GOOD - Improved",
+                        badgeClass: "badge-good",
+                        title: "Multi-Platform Content",
+                        prompt: "Create content for our spring open house event across platforms: 1) Twitter/X post (280 chars), 2) Instagram caption with call-to-action, 3) Facebook event description, 4) LinkedIn post targeting prospective students and parents. Include relevant hashtags and engagement prompts."
+                    },
+                    {
+                        level: "better",
+                        badge: "BETTER - Optimal",
+                        badgeClass: "badge-better",
+                        title: "Integrated Marketing Campaign",
+                        prompt: "Develop a comprehensive marketing campaign for our new graduate program in Sustainable Energy. Include: 1) Campaign strategy and key messages, 2) Target audience personas, 3) Content calendar (8 weeks) with platform-specific posts, 4) Email nurture sequence (5 emails), 5) Video script for prospective student testimonials, 6) Digital advertising copy, 7) PR announcement, 8) Conversion tracking recommendations. Brand voice should be: innovative, approachable, academically rigorous."
+                    }
+                ]
+            }
+        };
+
+        /* 
+        ========================================
+        GLOSSARY DATA
+        Add or edit glossary terms here
+        ========================================
+        */
+        const glossaryTerms = [
+            { term: "Large Language Model (LLM)", definition: "A type of AI trained on vast amounts of text data that can understand, generate, and manipulate human language.", category: "basics" },
+            { term: "Generative AI", definition: "AI systems that can create new content (text, images, audio) based on patterns learned from training data.", category: "basics" },
+            { term: "Prompt Engineering", definition: "The practice of crafting effective inputs (prompts) to get desired outputs from AI systems.", category: "basics" },
+            { term: "Token", definition: "A unit of text (usually a word or part of a word) that AI models process. Models have token limits for inputs and outputs.", category: "technical" },
+            { term: "Context Window", definition: "The maximum amount of text an AI model can consider at one time when generating a response.", category: "technical" },
+            { term: "Temperature", definition: "A setting that controls randomness in AI outputs. Higher values = more creative/unpredictable, lower = more focused/deterministic.", category: "technical" },
+            { term: "Hallucination", definition: "When an AI generates plausible-sounding but factually incorrect or nonsensical information.", category: "technical" },
+            { term: "Fine-Tuning", definition: "The process of further training an AI model on specific data to improve performance for particular tasks.", category: "technical" },
+            { term: "API (Application Programming Interface)", definition: "A set of protocols that allows different software applications to communicate with each other.", category: "technical" },
+            { term: "FERPA", definition: "Family Educational Rights and Privacy Act - Federal law protecting student education records privacy.", category: "ethics" },
+            { term: "Data Privacy", definition: "The practice of protecting personal and sensitive information from unauthorized access or disclosure.", category: "ethics" },
+            { term: "Bias in AI", definition: "Systematic errors in AI outputs that reflect prejudices present in training data or design choices.", category: "ethics" },
+            { term: "Transparency", definition: "Being open about when and how AI is used, including disclosure to stakeholders.", category: "ethics" },
+            { term: "Accountability", definition: "Taking responsibility for AI system outputs and their impacts on users and stakeholders.", category: "ethics" },
+            { term: "Machine Learning (ML)", definition: "A subset of AI where systems learn patterns from data rather than being explicitly programmed.", category: "basics" },
+            { term: "Neural Network", definition: "AI architecture inspired by human brain structure, used to recognize patterns and make decisions.", category: "technical" },
+            { term: "Natural Language Processing (NLP)", definition: "AI field focused on enabling computers to understand and respond to human language.", category: "basics" },
+            { term: "Retrieval-Augmented Generation (RAG)", definition: "Technique combining information retrieval with AI generation for more accurate, grounded responses.", category: "technical" },
+            { term: "Embedding", definition: "Converting text into numerical vectors that capture semantic meaning, enabling AI to understand relationships between words.", category: "technical" },
+            { term: "Zero-Shot Learning", definition: "AI's ability to perform tasks it wasn't explicitly trained on by using general knowledge.", category: "technical" },
+            { term: "Few-Shot Learning", definition: "Providing a few examples in the prompt to help AI understand the desired task or format.", category: "technical" },
+            { term: "System Prompt", definition: "Initial instructions that set the AI's role, behavior, and constraints for an entire conversation.", category: "basics" },
+            { term: "Human-in-the-Loop", definition: "Workflow where AI suggestions are reviewed by humans before final decisions or actions.", category: "ethics" },
+            { term: "Algorithmic Decision-Making", definition: "Using automated systems to make or support decisions that affect people.", category: "ethics" },
+            { term: "Explainability", definition: "The ability to understand and articulate why an AI system made a particular decision.", category: "ethics" },
+            { term: "Transfer Learning", definition: "Applying knowledge learned from one task to improve performance on different but related tasks.", category: "technical" },
+            { term: "Prompt Injection", definition: "A security vulnerability where malicious instructions override system prompts.", category: "ethics" },
+            { term: "Institutional Review Board (IRB)", definition: "Committee that reviews research involving human subjects to ensure ethical standards are met.", category: "education" },
+            { term: "Learning Management System (LMS)", definition: "Software platform for delivering, tracking, and managing educational courses and training programs.", category: "education" }
+        ];
+
+        /* 
+        ========================================
+        QUIZ DATA
+        Add or edit quiz questions here
+        ========================================
+        */
+        const quizQuestions = [
+            {
+                question: "What does LLM stand for in the context of AI?",
+                options: ["Learning Language Model", "Large Language Model", "Linear Logic Module", "Long-Lasting Memory"],
+                correct: 1,
+                explanation: "LLM stands for Large Language Model, which is an AI trained on vast amounts of text data to understand and generate human language."
+            },
+            {
+                question: "Which of the following is NOT a best practice when prompting AI for administrative tasks?",
+                options: ["Being specific about the desired format", "Providing context and background information", "Including all sensitive student data in the prompt", "Breaking complex requests into smaller parts"],
+                correct: 2,
+                explanation: "Never include sensitive student data (PII) in AI prompts. This violates privacy regulations like FERPA."
+            },
+            {
+                question: "What does FERPA stand for?",
+                options: ["Federal Education Records Privacy Act", "Family Educational Rights and Privacy Act", "Freedom of Educational Processing Act", "Financial Education Regulatory Protection Act"],
+                correct: 1,
+                explanation: "FERPA is the Family Educational Rights and Privacy Act, a federal law protecting the privacy of student education records."
+            },
+            {
+                question: "Which AI tool is developed by Anthropic?",
+                options: ["ChatGPT", "Gemini", "Claude", "Copilot"],
+                correct: 2,
+                explanation: "Claude is developed by Anthropic, while ChatGPT is by OpenAI, Gemini by Google, and Copilot by Microsoft."
+            },
+            {
+                question: "What is 'hallucination' in AI?",
+                options: ["When AI powers down unexpectedly", "When AI generates plausible but false information", "When AI refuses to answer", "When AI becomes too creative"],
+                correct: 1,
+                explanation: "Hallucination occurs when AI generates information that sounds plausible but is factually incorrect or fabricated."
+            },
+            {
+                question: "Which department would most likely use prompts for grant proposal development?",
+                options: ["Admissions", "Research Office", "Marketing", "Facilities"],
+                correct: 1,
+                explanation: "The Research Office typically handles grant proposals, research administration, and compliance."
+            },
+            {
+                question: "What is the primary purpose of a 'system prompt'?",
+                options: ["To shut down the AI system", "To set the AI's role and behavior for a conversation", "To delete previous conversation history", "To increase the AI's processing speed"],
+                correct: 1,
+                explanation: "A system prompt establishes the AI's role, behavior, constraints, and context for an entire conversation."
+            },
+            {
+                question: "Which of the following is a key ethical consideration when using AI with student data?",
+                options: ["Using as much data as possible", "Sharing AI outputs publicly without review", "Maintaining transparency and getting consent", "Automating all decisions without human oversight"],
+                correct: 2,
+                explanation: "Maintaining transparency about AI use and obtaining appropriate consent are key ethical practices."
+            },
+            {
+                question: "What does 'temperature' control in AI outputs?",
+                options: ["How fast the AI responds", "The randomness/creativity of responses", "The file size of outputs", "The physical temperature of servers"],
+                correct: 1,
+                explanation: "Temperature controls the randomness of AI outputs - higher values produce more creative/unpredictable responses."
+            },
+            {
+                question: "What is 'few-shot learning' in prompting?",
+                options: ["Training the AI extensively", "Providing examples in the prompt", "Limiting the AI's knowledge", "Quick one-response interactions"],
+                correct: 1,
+                explanation: "Few-shot learning involves providing a few examples in the prompt to help the AI understand the desired task or format."
+            },
+            {
+                question: "Which category does 'Natural Language Processing' fall under?",
+                options: ["Ethics", "Technical", "Education", "Privacy"],
+                correct: 1,
+                explanation: "NLP is a technical field focused on enabling computers to understand and respond to human language."
+            },
+            {
+                question: "What is the main benefit of using the 'BETTER' prompt format in this course?",
+                options: ["It's the longest format", "It provides comprehensive, contextual, and role-specific instructions", "It's free to use", "It requires no editing"],
+                correct: 1,
+                explanation: "The BETTER format provides comprehensive, context-rich, role-specific instructions that yield optimal AI outputs."
+            },
+            {
+                question: "What does RAG stand for in AI?",
+                options: ["Rapid AI Generation", "Retrieval-Augmented Generation", "Random Access Gateway", "Resource Allocation Grid"],
+                correct: 1,
+                explanation: "RAG (Retrieval-Augmented Generation) combines information retrieval with AI generation for more accurate responses."
+            },
+            {
+                question: "Which AI tool is integrated with Google Workspace?",
+                options: ["ChatGPT", "Claude", "Gemini", "Bing Chat"],
+                correct: 2,
+                explanation: "Gemini is developed by Google and has integration with Google Workspace applications."
+            },
+            {
+                question: "What is a 'context window' in AI?",
+                options: ["The time limit for responses", "The maximum text an AI can consider at once", "The physical space where AI runs", "The number of users at once"],
+                correct: 1,
+                explanation: "The context window is the maximum amount of text an AI model can consider when generating a response."
+            },
+            {
+                question: "When using AI for admissions reviews, what should always be done?",
+                options: ["Input all applicant data including sensitive information", "Replace human decision-makers entirely", "Use AI as a tool to support, not replace, human judgment", "Share AI outputs with unauthorized parties"],
+                correct: 2,
+                explanation: "AI should support human decision-making, not replace it, especially for high-stakes decisions like admissions."
+            },
+            {
+                question: "What is 'prompt engineering'?",
+                options: ["Building AI models", "Writing code for AI systems", "Crafting effective inputs for AI", "Designing user interfaces"],
+                correct: 2,
+                explanation: "Prompt engineering is the practice of crafting effective inputs (prompts) to get desired outputs from AI systems."
+            },
+            {
+                question: "Which of these is a type of AI bias?",
+                options: ["Systematic errors favoring certain groups", "Random typos in responses", "Slow response times", "Battery drain on devices"],
+                correct: 0,
+                explanation: "AI bias refers to systematic errors in outputs that reflect prejudices in training data or design choices."
+            },
+            {
+                question: "What is the purpose of human-in-the-loop workflows?",
+                options: ["To replace humans completely", "To have humans review AI suggestions before final decisions", "To make AI faster", "To reduce costs only"],
+                correct: 1,
+                explanation: "Human-in-the-loop ensures AI suggestions are reviewed by humans before final decisions, especially for important matters."
+            },
+            {
+                question: "Which AI term describes converting text into numerical vectors?",
+                options: ["Tokenization", "Embedding", "Summarization", "Translation"],
+                correct: 1,
+                explanation: "Embedding converts text into numerical vectors that capture semantic meaning, helping AI understand relationships."
+            }
+        ];
+
+        /* 
+        ========================================
+        APP STATE AND FUNCTIONS
+        Edit functionality below
+        ======================================== */
+        
+        // State
+        let currentDepartment = 'admissions';
+        let currentQuestion = 0;
+        let score = 0;
+        let questionsAnswered = 0;
+        let userAnswers = new Array(quizQuestions.length).fill(null);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGlossary();
+            renderPromptContent();
+            renderQuizQuestion();
+            setupNavigation();
+            setupMobileNav();
+            setupGlossarySearch();
+        });
+
+        // Mobile Navigation
+        function setupMobileNav() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const nav = document.getElementById('mobile-nav');
+            const closeBtn = document.getElementById('mobile-menu-close');
+            
+            btn.addEventListener('click', () => nav.classList.add('open'));
+            closeBtn.addEventListener('click', () => nav.classList.remove('open'));
+            
+            // Close when clicking a link
+            nav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => nav.classList.remove('open'));
+            });
+        }
+
+        // Navigation Active State
+        function setupNavigation() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.scrollY >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Render Prompt Content
+        function renderPromptContent() {
+            const data = promptData[currentDepartment];
+            const container = document.getElementById('prompt-content');
+            
+            let html = `
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-university-blue mb-2">${data.title}</h3>
+                    <p class="text-slate-600">${data.description}</p>
+                </div>
+                <div class="space-y-6">
+            `;
+            
+            data.prompts.forEach((prompt, index) => {
+                html += `
+                    <div class="prompt-box bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="${prompt.badgeClass} px-3 py-1 rounded-full text-sm font-medium">${prompt.badge}</span>
+                                <h4 class="font-semibold text-slate-800">${prompt.title}</h4>
+                            </div>
+                            <button onclick="copyToClipboard('${encodeURIComponent(prompt.prompt)}', this)" class="copy-btn flex items-center gap-2 px-3 py-1 border border-slate-300 rounded-lg text-sm text-slate-600 hover:bg-slate-100 transition-colors">
+                                <i class="ph ph-copy"></i> <span>Copy</span>
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-slate-700 font-mono text-sm bg-slate-50 p-4 rounded-lg border border-slate-200 whitespace-pre-wrap">${prompt.prompt}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Show Department
+        function showDepartment(dept) {
+            currentDepartment = dept;
+            
+            // Update buttons
+            document.querySelectorAll('.dept-btn').forEach(btn => {
+                if (btn.dataset.dept === dept) {
+                    btn.className = 'dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-university-blue text-white';
+                } else {
+                    btn.className = 'dept-btn px-4 py-2 rounded-lg font-medium transition-colors bg-slate-200 text-slate-700 hover:bg-university-blue hover:text-white';
+                }
+            });
+            
+            renderPromptContent();
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(text, button) {
+            const decodedText = decodeURIComponent(text);
+            navigator.clipboard.writeText(decodedText).then(() => {
+                const btn = button;
+                btn.classList.add('copied');
+                btn.querySelector('span').textContent = 'Copied!';
+                btn.querySelector('i').className = 'ph ph-check';
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.querySelector('span').textContent = 'Copy';
+                    btn.querySelector('i').className = 'ph ph-copy';
+                }, 2000);
+            });
+        }
+
+        // Render Glossary
+        function renderGlossary(filteredTerms = glossaryTerms) {
+            const container = document.getElementById('glossary-grid');
+            const noResults = document.getElementById('no-results');
+            
+            if (filteredTerms.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            
+            let html = '';
+            filteredTerms.forEach(item => {
+                html += `
+                    <div class="glossary-term bg-white rounded-lg p-4 border border-slate-200" data-category="${item.category}">
+                        <h4 class="font-semibold text-university-blue mb-2">${item.term}</h4>
+                        <p class="text-sm text-slate-600">${item.definition}</p>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Glossary Search and Filter
+        function setupGlossarySearch() {
+            const searchInput = document.getElementById('glossary-search');
+            const filterSelect = document.getElementById('glossary-filter');
+            
+            function filterGlossary() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const category = filterSelect.value;
+                
+                const filtered = glossaryTerms.filter(item => {
+                    const matchesSearch = item.term.toLowerCase().includes(searchTerm) || 
+                                         item.definition.toLowerCase().includes(searchTerm);
+                    const matchesCategory = category === 'all' || item.category === category;
+                    return matchesSearch && matchesCategory;
+                });
+                
+                renderGlossary(filtered);
+            }
+            
+            searchInput.addEventListener('input', filterGlossary);
+            filterSelect.addEventListener('change', filterGlossary);
+        }
+
+        // Render Quiz Question
+        function renderQuizQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                showQuizResults();
+                return;
+            }
+            
+            const q = quizQuestions[currentQuestion];
+            const card = document.getElementById('quiz-card');
+            
+            let html = `
+                <div class="mb-6">
+                    <span class="inline-block bg-university-blue text-white px-3 py-1 rounded-full text-sm font-medium mb-4">Question ${currentQuestion + 1}</span>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-6">${q.question}</h3>
+                    <div class="space-y-3">
+            `;
+            
+            q.options.forEach((option, index) => {
+                const isSelected = userAnswers[currentQuestion] === index;
+                const showResult = userAnswers[currentQuestion] !== null;
+                const isCorrect = index === q.correct;
+                
+                let classes = 'quiz-option w-full text-left p-4 rounded-lg border-2 ';
+                if (showResult) {
+                    if (isCorrect) classes += 'correct';
+                    else if (isSelected) classes += 'incorrect';
+                    else classes += 'border-slate-200 opacity-50';
+                } else {
+                    classes += isSelected ? 'selected border-university-blue' : 'border-slate-200';
+                }
+                
+                html += `
+                    <div class="${classes}" onclick="selectAnswer(${index})">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium ${isSelected || (showResult && isCorrect) ? 'border-university-blue bg-university-blue text-white' : 'border-slate-300 text-slate-500'}">
+                                ${String.fromCharCode(65 + index)}
+                            </span>
+                            <span>${option}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            
+            if (userAnswers[currentQuestion] !== null) {
+                html += `
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-sm font-medium text-university-blue mb-1">Explanation:</p>
+                        <p class="text-sm text-slate-600">${q.explanation}</p>
+                    </div>
+                `;
+            }
+            
+            card.innerHTML = html;
+            
+            // Update progress
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('score').textContent = score;
+            document.getElementById('questions-answered').textContent = questionsAnswered;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / quizQuestions.length) * 100}%`;
+            
+            // Update buttons
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').textContent = currentQuestion === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question';
+        }
+
+        // Select Answer
+        function selectAnswer(index) {
+            if (userAnswers[currentQuestion] !== null) return;
+            
+            userAnswers[currentQuestion] = index;
+            questionsAnswered++;
+            
+            if (index === quizQuestions[currentQuestion].correct) {
+                score++;
+            }
+            
+            renderQuizQuestion();
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestion < quizQuestions.length - 1) {
+                currentQuestion++;
+                renderQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        // Previous Question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuizQuestion();
+            }
+        }
+
+        // Show Quiz Results
+        function showQuizResults() {
+            document.getElementById('quiz-progress').classList.add('hidden');
+            document.getElementById('quiz-card').classList.add('hidden');
+            document.getElementById('quiz-nav').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+            
+            const percentage = (score / quizQuestions.length) * 100;
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('max-score').textContent = quizQuestions.length;
+            
+            let message = '';
+            let messageClass = '';
+            if (percentage >= 90) {
+                message = 'Excellent! You have mastered AI fundamentals for university administration!';
+                messageClass = 'text-green-600';
+            } else if (percentage >= 75) {
+                message = 'Great job! You have a strong understanding of AI concepts.';
+                messageClass = 'text-blue-600';
+            } else if (percentage >= 60) {
+                message = 'Good effort! Review the course materials to strengthen your knowledge.';
+                messageClass = 'text-amber-600';
+            } else {
+                message = 'Keep learning! Review the course and try again.';
+                messageClass = 'text-red-600';
+            }
+            
+            document.getElementById('score-message').textContent = message;
+            document.getElementById('score-message').className = `text-lg font-medium mb-8 ${messageClass}`;
+        }
+
+        // Reset Quiz
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            questionsAnswered = 0;
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            
+            document.getElementById('quiz-progress').classList.remove('hidden');
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-nav').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            
+            renderQuizQuestion();
+        }
+    </script>
+</body>
+</html>

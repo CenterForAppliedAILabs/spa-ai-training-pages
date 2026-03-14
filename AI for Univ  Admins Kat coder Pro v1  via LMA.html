@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: Kat Coder Pro v1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for US University theme */
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2c5282;
+            --accent-color: #3182ce;
+            --text-color: #333;
+            --light-bg: #f7fafc;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+        
+        .header-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e6f3ff, #f0e6ff);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .prompt-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .prompt-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+        }
+        
+        .prompt-content {
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            background: #ffffff;
+            border-radius: 0 0 6px 6px;
+            border-top: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+        
+        .quiz-question {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-question:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .nav-active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 4px;
+            background-color: #e6f3ff;
+            color: var(--primary-color);
+            border: 1px solid #bee3f8;
+        }
+        
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Progress Bar -->
+    <div class="progress-bar fixed top-0 left-0 right-0 z-50">
+        <div id="progressFill" class="progress-fill"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header-bg text-white">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold">University Admin AI Training: Kat Coder Pro v1</h1>
+                    <p class="text-lg opacity-90 mt-2">Powered by Kat Coder Pro v1</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <div class="text-sm opacity-75">Powered by Kat Coder Pro v1</div>
+                    <div class="text-xs opacity-50">20+ Departments | 20 Question Quiz | Complete Glossary</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto py-3">
+                <a href="#overview" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Overview</a>
+                <a href="#getting-started" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Getting Started</a>
+                <a href="#prompting-basics" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Prompting Basics</a>
+                <a href="#department-guides" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Department Guides</a>
+                <a href="#glossary" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Glossary</a>
+                <a href="#quiz" class="nav-link px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap">Final Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        
+        <!-- Course Overview -->
+        <section id="overview" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8 card-hover">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Course Overview</h2>
+                <p class="text-gray-600 mb-6">
+                    Welcome to the complete guide for university administrators on leveraging Artificial Intelligence 
+                    in higher education. This course is designed to provide practical, department-specific guidance 
+                    on using AI tools effectively and ethically in your daily administrative work.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-blue-800 mb-2">🎯 Objectives</h3>
+                        <ul class="text-blue-700 text-sm space-y-1">
+                            <li>• Understand AI fundamentals for administrators</li>
+                            <li>• Learn department-specific prompting strategies</li>
+                            <li>• Master popular AI chat tools</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-green-800 mb-2">⏱️ Duration</h3>
+                        <p class="text-green-700 text-sm">Self-paced learning - approximately 2-3 hours</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-purple-800 mb-2">✅ Assessment</h3>
+                        <p class="text-purple-700 text-sm">20-question quiz with immediate feedback</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box p-6">
+                    <h3 class="font-bold mb-3">Who This Course Is For:</h3>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <strong>University Administrators:</strong><br>
+                            • Department heads and managers<br>
+                            • Academic advisors and registrars<br>
+                            • HR and finance professionals<br>
+                            • IT and facilities management
+                        </div>
+                        <div>
+                            <strong>Higher Education Professionals:</strong><br>
+                            • Student services coordinators<br>
+                            • Research administrators<br>
+                            • Marketing and communications staff<br>
+                            • Compliance and legal teams
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started Section -->
+        <section id="getting-started" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Getting Started with AI Tools</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Popular LLM Chat Tools</h3>
+                        <p class="text-gray-600 mb-4">
+                            Here are the most popular AI chat tools you can start using today:
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-bold text-blue-600">ChatGPT (OpenAI)</h4>
+                                <p class="text-sm text-gray-600 mb-2">The most widely used AI chatbot</p>
+                                <ul class="text-xs text-gray-500 space-y-1">
+                                    <li>• Website: chat.openai.com</li>
+                                    <li>• Free tier available</li>
+                                    <li>• GPT-4 model for advanced capabilities</li>
+                                    <li>• Integration with Microsoft Office 365</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-bold text-purple-600">Claude (Anthropic)</h4>
+                                <p class="text-sm text-gray-600 mb-2">Known for detailed, thoughtful responses</p>
+                                <ul class="text-xs text-gray-500 space-y-1">
+                                    <li>• Website: claude.ai</li>
+                                    <li>• Free and Pro versions</li>
+                                    <li>• Excellent for document analysis</li>
+                                    <li>• Strong safety and ethics focus</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-bold text-green-600">Gemini (Google)</h4>
+                                <p class="text-sm text-gray-600 mb-2">Google's AI assistant with web search</p>
+                                <ul class="text-xs text-gray-500 space-y-1">
+                                    <li>• Website: gemini.google.com</li>
+                                    <li>• Free tier available</li>
+                                    <li>• Real-time web access</li>
+                                    <li>• Integration with Google Workspace</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-700">Quick Start Guide</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-bold">Step 1: Choose Your Tool</h4>
+                                <p class="text-sm text-gray-700">
+                                    Start with ChatGPT for general use, or Claude for document-heavy tasks. 
+                                    All offer free tiers to get started.
+                                </p>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-bold">Step 2: Create an Account</h4>
+                                <p class="text-sm text-gray-700">
+                                    Use your university email for professional accounts. 
+                                    Consider departmental subscriptions for team access.
+                                </p>
+                            </div>
+                            
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-bold">Step 3: Start with Basic Prompts</h4>
+                                <p class="text-sm text-gray-700">
+                                    Begin with simple requests like drafting emails or 
+                                    summarizing documents before moving to complex tasks.
+                                </p>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg">
+                                <h4 class="font-bold">Step 4: Learn Department-Specific Prompts</h4>
+                                <p class="text-sm text-gray-700">
+                                    Use the examples in the next section tailored to 
+                                    your specific administrative role.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-gray-700 mb-2">Important Notes:</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Never share sensitive student data</li>
+                                <li>• Always verify AI-generated content</li>
+                                <li>• Check your institution's AI policy</li>
+                                <li>• Use university email for professional accounts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prompting Basics Section -->
+        <section id="prompting-basics" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">AI Prompting Fundamentals</h2>
+                
+                <div class="highlight-box p-6 mb-6">
+                    <h3 class="font-bold mb-3">The Ok/Good/Better Framework</h3>
+                    <p class="text-sm">
+                        This framework helps you improve your prompts from basic to excellent. 
+                        Each level builds on the previous one, adding specificity and context 
+                        to get better AI responses.
+                    </p>
+                </div>
+                
+                <div class="grid gap-8">
+                    <div class="border rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-red-600 mb-4">❌ OK: Basic Prompt</h3>
+                        <p class="text-gray-600 mb-4">"Write a policy about remote work."</p>
+                        <p class="text-sm text-gray-500">
+                            This prompt is too vague and will likely produce generic results 
+                            that don't meet your specific needs.
+                        </p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-orange-600 mb-4">⚠️ GOOD: Improved Prompt</h3>
+                        <p class="text-gray-600 mb-4">
+                            "Write a policy about remote work for university staff. 
+                            Include guidelines for productivity and communication."
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            This prompt provides more context but still lacks important 
+                            details about your specific institution and requirements.
+                        </p>
+                    </div>
+                    
+                    <div class="border rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-green-600 mb-4">✅ BETTER: Excellent Prompt</h3>
+                        <p class="text-gray-600 mb-4">
+                            "Write a comprehensive remote work policy for a mid-sized 
+                            university's administrative staff. The policy should address 
+                            eligibility criteria, equipment requirements, security protocols 
+                            for handling student data, productivity expectations, communication 
+                            guidelines, and compliance with FERPA regulations. 
+                            Format it as a formal policy document suitable for 
+                            department heads to implement."
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            This prompt includes specific context, requirements, 
+                            format instructions, and compliance considerations 
+                            for a tailored, actionable policy.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 grid md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-blue-800 mb-3">Key Prompting Principles</h4>
+                        <ul class="text-sm text-blue-700 space-y-2">
+                            <li>• Be specific about your role and context</li>
+                            <li>• Include formatting requirements</li>
+                            <li>• Specify the audience and purpose</li>
+                            <li>• Mention any compliance or policy requirements</li>
+                            <li>• Provide examples when helpful</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-green-800 mb-3">Common Prompt Elements</h4>
+                        <ul class="text-sm text-green-700 space-y-2">
+                            <li>• Role: "As a university registrar..."</li>
+                            <li>• Task: "Create a workflow for..."</li>
+                            <li>• Context: "For a student with..."</li>
+                            <li>• Format: "In a table format..."</li>
+                            <li>• Constraints: "Following FERPA guidelines..."</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Department Guides Section -->
+        <section id="department-guides" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Department-Specific Prompting Guides</h2>
+                <p class="text-gray-600 mb-8">
+                    Below are tailored prompting examples for various university departments. 
+                    Each section provides Ok/Good/Better examples to help you craft effective prompts.
+                </p>
+                
+                <!-- Admissions Office -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">1. Admissions Office</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Help me write an email to prospective students."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write an email to high school seniors about our university's application process and deadlines."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the Director of Admissions at a mid-sized liberal arts university, create a personalized email template for high school seniors in their final semester. The email should highlight our rolling admission deadline (March 15), explain the application requirements, address common concerns about financial aid, and include a friendly tone that reflects our university's values of community and academic excellence. Format it with a clear subject line, greeting, 3-4 concise paragraphs, and a compelling call-to-action to schedule a campus visit."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Academic Affairs -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">2. Academic Affairs</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Create a syllabus for a course."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Create a syllabus for an Introduction to Psychology course."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As an Associate Dean in the College of Arts and Sciences, develop a comprehensive syllabus for 'Introduction to Psychology' (PSY 101), a 3-credit undergraduate course. The syllabus should follow our university's template requirements, include learning outcomes aligned with APA guidelines, a detailed weekly schedule with required readings from our adopted textbook, assessment methods (exams, papers, participation), academic integrity policies, accommodations information, and contact details. Ensure it meets accessibility standards and includes clear expectations for both in-person and online components of this hybrid course."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Student Services -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">3. Student Services</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Write a welcome message for new students."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write a welcome message for international students arriving on campus."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the Director of International Student Services, create a comprehensive welcome guide for new international students arriving for the fall semester. The guide should include information about visa requirements, campus orientation schedule, housing check-in procedures, health insurance enrollment, local transportation options, emergency contacts, cultural adjustment tips, and important dates for the academic year. Format it as a printable PDF with clear sections, checklists for items to complete before arrival, and contact information for each department. Use a warm, supportive tone while providing practical, actionable information."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Registrar's Office -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">4. Registrar's Office</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Help with a transfer credit policy."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write a transfer credit evaluation policy for undergraduate students."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the University Registrar, develop a comprehensive transfer credit evaluation policy for undergraduate students transferring from accredited institutions. The policy should specify maximum credit hours accepted, minimum grade requirements (C- or better), course equivalency determination process, credit limits for technical/vocational courses, articulation agreements with community colleges, and procedures for appealing credit decisions. Include clear guidelines for academic departments to follow when reviewing course syllabi and determining equivalencies. Format it as an official policy document with effective dates and approval signatures required."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Financial Aid -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">5. Financial Aid Office</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Explain financial aid options."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Create a guide for students about applying for financial aid."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As a Financial Aid Counselor, create a comprehensive guide for first-generation college students and their families about navigating the financial aid process. The guide should explain FAFSA completion step-by-step, differentiate between grants, scholarships, work-study, and loans, outline important deadlines, provide tips for maximizing aid eligibility, include a glossary of financial aid terms, and offer contact information for personalized assistance. Use plain language, include visual aids like checklists and timelines, and address common concerns about debt and repayment options. Format it as a user-friendly brochure that can be distributed at college fairs and during orientation."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Human Resources -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">6. Human Resources</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Write a job description."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write a job description for an administrative assistant position."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the HR Manager for a university's College of Business, create a detailed job description for an Administrative Assistant position in the Dean's Office. The description should include: job title, department overview, reporting structure, essential duties (calendar management, travel arrangements, document preparation, phone coverage), required qualifications (education, experience, skills), preferred qualifications, physical requirements, work environment details, salary range, benefits summary, and equal opportunity statement. Ensure it complies with ADA requirements and reflects our commitment to diversity, equity, and inclusion. Use our university's standard format and include clear application instructions."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Research Administration -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">7. Research Administration</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Help with a grant proposal."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write a grant proposal for STEM education research."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As a Research Administrator, develop a comprehensive NSF grant proposal for a 3-year study on improving STEM retention rates for underrepresented minority students. The proposal should include: project summary, intellectual merit section with literature review and theoretical framework, broader impacts addressing diversity in STEM, detailed methodology with mixed-methods approach, timeline with milestones, detailed budget justification, facilities and resources description, and evaluation plan. Align with NSF review criteria and include letters of support from partnering community colleges. Format according to NSF guidelines with proper page limits and formatting requirements."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- IT Services -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">8. IT Services</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Create IT security guidelines."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write cybersecurity guidelines for faculty and staff."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the IT Security Manager for a university with 15,000 students and 2,000 employees, create comprehensive cybersecurity guidelines for faculty and staff. The guidelines should cover: password management best practices, phishing email identification and reporting, secure handling of sensitive student data (FERPA compliance), VPN usage for remote access, secure file sharing protocols, device security for laptops and mobile devices, social media security, incident reporting procedures, and regular security training requirements. Include practical examples, red flags to watch for, and step-by-step instructions for common security tasks. Format as an accessible PDF with infographics and quick reference checklists."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Marketing and Communications -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">9. Marketing and Communications</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Write content for our website."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Write content for the university's admissions webpage."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the Director of Marketing and Communications, create engaging content for the university's main admissions webpage targeting high-achieving high school juniors and their parents. The content should highlight our academic programs, campus life, student support services, career outcomes, and unique selling points. Include compelling headlines, student testimonials, statistics on job placement and graduate school acceptance, information about financial aid and scholarships, and clear calls-to-action for campus visits and applications. Ensure the tone is inspiring yet informative, SEO-optimized, and aligned with our brand voice. Provide content for hero section, program highlights, student life, and next steps sections."</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Facilities Management -->
+                <div class="mb-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">10. Facilities Management</h3>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">❌ OK: Basic</div>
+                        <div class="prompt-content">"Create a maintenance schedule."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">⚠️ GOOD: Improved</div>
+                        <div class="prompt-content">"Create a preventive maintenance schedule for campus buildings."</div>
+                    </div>
+                    
+                    <div class="prompt-box mb-6">
+                        <div class="prompt-header">✅ BETTER: Excellent</div>
+                        <div class="prompt-content">"As the Facilities Manager for a university campus with 50 buildings and 2 million square feet, develop a comprehensive preventive maintenance schedule for the academic year. The schedule should include: monthly HVAC system checks, quarterly fire safety inspections, semi-annual roof inspections, annual boiler maintenance, bi-annual window cleaning, regular landscaping schedules, and emergency preparedness checks. Include responsible departments, estimated time requirements, cost projections, and compliance requirements with ADA and building codes. Format as a detailed spreadsheet with Gantt chart visualization and integrate with our existing work order management system."</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Glossary Section -->
+        <section id="glossary" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">AI Glossary for Administrators</h2>
+                <p class="text-gray-600 mb-6">
+                    Essential terms and concepts you should know when working with AI tools.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- A-D -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-3">A-D</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="font-bold text-blue-600">AI (Artificial Intelligence):</span>
+                                <p class="text-sm text-gray-600 ml-2">Computer systems that can perform tasks typically requiring human intelligence, such as understanding language, recognizing patterns, and making decisions.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Algorithm:</span>
+                                <p class="text-sm text-gray-600 ml-2">A set of step-by-step instructions that a computer follows to solve a problem or complete a task.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Chatbot:</span>
+                                <p class="text-sm text-gray-600 ml-2">A computer program that simulates conversation with human users, especially over the internet.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Data Privacy:</span>
+                                <p class="text-sm text-gray-600 ml-2">The protection of personal information and ensuring it is collected, used, and stored appropriately.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Deep Learning:</span>
+                                <p class="text-sm text-gray-600 ml-2">A subset of machine learning that uses neural networks with many layers to learn from large amounts of data.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Digital Literacy:</span>
+                                <p class="text-sm text-gray-600 ml-2">The ability to use digital technology, communication tools, and networks to access, manage, integrate, evaluate, and create information.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- E-H -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-3">E-H</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="font-bold text-blue-600">Ethics:</span>
+                                <p class="text-sm text-gray-600 ml-2">Moral principles that guide the development and use of AI technologies, ensuring fairness and avoiding harm.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">FERPA:</span>
+                                <p class="text-sm text-gray-600 ml-2">Family Educational Rights and Privacy Act - a federal law that protects the privacy of student education records.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">GPT (Generative Pre-trained Transformer):</span>
+                                <p class="text-sm text-gray-600 ml-2">A type of AI model designed to generate human-like text based on the input it receives.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Hallucination:</span>
+                                <p class="text-sm text-gray-600 ml-2">When an AI generates false or misleading information as if it were true.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Human-AI Collaboration:</span>
+                                <p class="text-sm text-gray-600 ml-2">The partnership between humans and AI systems to achieve better outcomes than either could alone.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Innovation:</span>
+                                <p class="text-sm text-gray-600 ml-2">The process of introducing new ideas, methods, or products to improve existing systems or create new solutions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- I-L -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-3">I-L</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="font-bold text-blue-600">Large Language Model (LLM):</span>
+                                <p class="text-sm text-gray-600 ml-2">A type of AI model trained on vast amounts of text data to understand and generate human-like language.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Machine Learning:</span>
+                                <p class="text-sm text-gray-600 ml-2">A subset of AI that enables computers to learn from data without being explicitly programmed.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Natural Language Processing (NLP):</span>
+                                <p class="text-sm text-gray-600 ml-2">The ability of computers to understand, interpret, and generate human language.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Neural Network:</span>
+                                <p class="text-sm text-gray-600 ml-2">A computer system modeled after the human brain that recognizes patterns and makes predictions.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">OpenAI:</span>
+                                <p class="text-sm text-gray-600 ml-2">An artificial intelligence research laboratory and company known for developing ChatGPT and other AI technologies.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Prompt Engineering:</span>
+                                <p class="text-sm text-gray-600 ml-2">The practice of crafting effective instructions for AI systems to get desired outputs.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- M-P -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-3">M-P</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="font-bold text-blue-600">Prompt:</span>
+                                <p class="text-sm text-gray-600 ml-2">The input or question you give to an AI system to get a response.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Productivity:</span>
+                                <p class="text-sm text-gray-600 ml-2">The efficiency of achieving maximum output with minimum wasted effort or expense.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Quality Assurance:</span>
+                                <p class="text-sm text-gray-600 ml-2">The process of ensuring that AI-generated content meets required standards and accuracy.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Reliability:</span>
+                                <p class="text-sm text-gray-600 ml-2">The consistency and dependability of AI systems in producing accurate and trustworthy results.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Research Administration:</span>
+                                <p class="text-sm text-gray-600 ml-2">The management and oversight of research activities, including grants, compliance, and reporting.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Security:</span>
+                                <p class="text-sm text-gray-600 ml-2">Protecting AI systems and data from unauthorized access, use, disclosure, disruption, modification, or destruction.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- R-Z -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 mb-3">R-Z</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="font-bold text-blue-600">Training Data:</span>
+                                <p class="text-sm text-gray-600 ml-2">The information used to teach AI models how to perform tasks and make predictions.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">User Experience (UX):</span>
+                                <p class="text-sm text-gray-600 ml-2">The overall experience a person has when interacting with AI tools and systems.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Validation:</span>
+                                <p class="text-sm text-gray-600 ml-2">The process of confirming that AI systems work correctly and produce accurate results.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Workflow:</span>
+                                <p class="text-sm text-gray-600 ml-2">A sequence of steps or processes that AI tools can help streamline and improve.</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-blue-600">Zero-shot Learning:</span>
+                                <p class="text-sm text-gray-600 ml-2">When AI can perform tasks it wasn't specifically trained for, based on general understanding.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 bg-blue-50 p-6 rounded-lg">
+                    <h4 class="font-bold text-blue-800 mb-3">How to Use This Glossary:</h4>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Reference terms when reading AI-related materials</li>
+                        <li>• Use when discussing AI implementation with IT teams</li>
+                        <li>• Include in training materials for staff</li>
+                        <li>• Share with colleagues to build common understanding</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Final Assessment</h2>
+                <p class="text-gray-600 mb-6">
+                    Test your knowledge of AI concepts and best practices for university administration. 
+                    This 20-question quiz will help reinforce key concepts from the course.
+                </p>
+                
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Quiz questions will be loaded here -->
+                </div>
+                
+                <div id="quiz-results" class="hidden mt-8 p-6 bg-gray-50 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Quiz Results</h3>
+                    <div id="score-display" class="text-2xl font-bold mb-4"></div>
+                    <div id="feedback-display" class="mb-4"></div>
+                    <button id="retake-quiz" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                        Retake Quiz
+                    </button>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button id="submit-quiz" class="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors">
+                        Submit Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Course Information</h3>
+                    <ul class="text-gray-300 text-sm space-y-2">
+                        <li>• Duration: Self-paced (2-3 hours)</li>
+                        <li>• Format: Interactive online course</li>
+                        <li>• Assessment: 20-question final quiz</li>
+                        <li>• Target Audience: University administrators</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Course Features</h3>
+                    <ul class="text-gray-300 text-sm space-y-2">
+                        <li>• Department-specific guidance</li>
+                        <li>• Ok/Good/Better prompt framework</li>
+                        <li>• Comprehensive glossary</li>
+                        <li>• Practical examples and templates</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Next Steps</h3>
+                    <ul class="text-gray-300 text-sm space-y-2">
+                        <li>• Review department guides</li>
+                        <li>• Practice with AI tools</li>
+                        <li>• Share with colleagues</li>
+                        <li>• Implement in daily workflows</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400 text-sm">
+                © 2025 University Admin AI Training: Kat Coder Pro v1 - Powered by Kat Coder Pro v1
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Quiz questions and answers
+        const quizData = [
+            {
+                question: "What does AI stand for in the context of this course?",
+                options: [
+                    "Advanced Integration",
+                    "Artificial Intelligence", 
+                    "Automated Information",
+                    "Academic Intelligence"
+                ],
+                correct: 1,
+                explanation: "AI stands for Artificial Intelligence, which refers to computer systems that can perform tasks typically requiring human intelligence."
+            },
+            {
+                question: "Which of the following is NOT a recommended AI chat tool for university administrators?",
+                options: [
+                    "ChatGPT",
+                    "Claude",
+                    "Siri",
+                    "Gemini"
+                ],
+                correct: 2,
+                explanation: "Siri is a personal assistant on Apple devices, not a professional AI chat tool like ChatGPT, Claude, or Gemini."
+            },
+            {
+                question: "What is the main purpose of the Ok/Good/Better framework?",
+                options: [
+                    "To rate the quality of AI tools",
+                    "To improve the effectiveness of prompts",
+                    "To categorize different departments",
+                    "To measure AI response times"
+                ],
+                correct: 1,
+                explanation: "The Ok/Good/Better framework helps improve prompt effectiveness by making them more specific and contextual."
+            },
+            {
+                question: "Which element should NOT be included in an effective AI prompt?",
+                options: [
+                    "Specific role and context",
+                    "Detailed requirements",
+                    "Personal student data",
+                    "Formatting instructions"
+                ],
+                correct: 2,
+                explanation: "Never include personal student data in AI prompts due to privacy and FERPA compliance requirements."
+            },
+            {
+                question: "What does FERPA protect in the context of AI use?",
+                options: [
+                    "Faculty research data",
+                    "Student education records",
+                    "University financial information",
+                    "Campus security footage"
+                ],
+                correct: 1,
+                explanation: "FERPA (Family Educational Rights and Privacy Act) protects the privacy of student education records."
+            },
+            {
+                question: "Which department would most likely use AI for transfer credit evaluation?",
+                options: [
+                    "Admissions",
+                    "Registrar's Office",
+                    "Financial Aid",
+                    "Student Services"
+                ],
+                correct: 1,
+                explanation: "The Registrar's Office handles academic records and would use AI for transfer credit evaluation processes."
+            },
+            {
+                question: "What is a 'hallucination' in AI terminology?",
+                options: [
+                    "When AI generates false information as if true",
+                    "When AI refuses to answer a question",
+                    "When AI provides multiple contradictory answers",
+                    "When AI asks the user questions"
+                ],
+                correct: 0,
+                explanation: "An AI hallucination occurs when the system generates false or misleading information presented as truth."
+            },
+            {
+                question: "Which of the following is a key principle of prompt engineering?",
+                options: [
+                    "Use as few words as possible",
+                    "Include specific context and requirements",
+                    "Ask multiple questions in one prompt",
+                    "Use technical jargon whenever possible"
+                ],
+                correct: 1,
+                explanation: "Effective prompts include specific context, requirements, and clear instructions for better results."
+            },
+            {
+                question: "What should you do before using AI-generated content in official university communications?",
+                options: [
+                    "Use it directly without changes",
+                    "Verify accuracy and compliance",
+                    "Translate it to multiple languages",
+                    "Submit it to legal for approval only"
+                ],
+                correct: 1,
+                explanation: "Always verify AI-generated content for accuracy, compliance, and appropriateness before use."
+            },
+            {
+                question: "Which AI tool is known for its strong document analysis capabilities?",
+                options: [
+                    "ChatGPT",
+                    "Claude",
+                    "Gemini",
+                    "All of the above"
+                ],
+                correct: 1,
+                explanation: "Claude is particularly known for its excellent document analysis and processing capabilities."
+            },
+            {
+                question: "What is the primary benefit of using AI in academic affairs?",
+                options: [
+                    "Reducing faculty workload",
+                    "Improving student engagement",
+                    "Streamlining administrative processes",
+                    "All of the above"
+                ],
+                correct: 3,
+                explanation: "AI can benefit academic affairs by reducing workload, improving engagement, and streamlining processes."
+            },
+            {
+                question: "When creating prompts for financial aid guidance, what should be prioritized?",
+                options: [
+                    "Technical jargon",
+                    "Plain language and clarity",
+                    "Detailed legal requirements",
+                    "University-specific acronyms"
+                ],
+                correct: 1,
+                explanation: "Financial aid communications should use plain language and clarity to ensure accessibility for all students and families."
+            },
+            {
+                question: "What is the role of ethics in AI implementation?",
+                options: [
+                    "Ensuring faster processing",
+                    "Guiding fair and responsible use",
+                    "Reducing costs",
+                    "Improving technical accuracy"
+                ],
+                correct: 1,
+                explanation: "AI ethics guide the fair, responsible, and transparent use of AI technologies."
+            },
+            {
+                question: "Which department would benefit most from AI for cybersecurity guidelines?",
+                options: [
+                    "IT Services",
+                    "Human Resources",
+                    "Marketing",
+                    "Facilities Management"
+                ],
+                correct: 0,
+                explanation: "IT Services is responsible for cybersecurity and would create and implement security guidelines."
+            },
+            {
+                question: "What is machine learning?",
+                options: [
+                    "Computers learning from data without explicit programming",
+                    "Humans teaching computers through direct instruction",
+                    "AI systems that only work with pre-written scripts",
+                    "Manual data entry processes"
+                ],
+                correct: 0,
+                explanation: "Machine learning enables computers to learn from data and improve without being explicitly programmed."
+            },
+            {
+                question: "When should you avoid using AI tools?",
+                options: [
+                    "For brainstorming ideas",
+                    "For handling sensitive student information",
+                    "For drafting initial communications",
+                    "For research assistance"
+                ],
+                correct: 1,
+                explanation: "Avoid using AI for sensitive student information to protect privacy and comply with regulations."
+            },
+            {
+                question: "What makes a prompt 'BETTER' rather than just 'GOOD'?",
+                options: [
+                    "Length and complexity",
+                    "Specific context and detailed requirements",
+                    "Use of technical terminology",
+                    "Multiple questions combined"
+                ],
+                correct: 1,
+                explanation: "Better prompts include specific context, detailed requirements, and clear instructions."
+            },
+            {
+                question: "Which of the following is essential for AI implementation in universities?",
+                options: [
+                    "Universal adoption across all departments",
+                    "Clear policies and training",
+                    "Expensive software licenses",
+                    "Complete replacement of human staff"
+                ],
+                correct: 1,
+                explanation: "Clear policies and training are essential for responsible and effective AI implementation."
+            },
+            {
+                question: "What should research administrators consider when using AI for grant proposals?",
+                options: [
+                    "Compliance with funding agency guidelines",
+                    "Including AI-generated content without verification",
+                    "Using AI to replace all human input",
+                    "Skipping traditional review processes"
+                ],
+                correct: 0,
+                explanation: "Research administrators must ensure AI use complies with funding agency guidelines and maintains integrity."
+            },
+            {
+                question: "What is the primary goal of digital literacy in AI education?",
+                options: [
+                    "Learning to code AI systems",
+                    "Understanding how to use AI tools effectively and safely",
+                    "Becoming AI experts",
+                    "Replacing traditional skills with AI skills"
+                ],
+                correct: 1,
+                explanation: "Digital literacy focuses on using AI tools effectively, safely, and appropriately for specific needs."
+            }
+        ];
+
+        // Initialize quiz
+        function initQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            
+            quizData.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-3">Question ${index + 1}: ${question.question}</h4>
+                    <div class="space-y-2" id="options-${index}">
+                        ${question.options.map((option, optionIndex) => `
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="question-${index}" value="${optionIndex}" class="form-radio text-blue-600">
+                                <span class="text-gray-700">${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="feedback-${index}" class="mt-2 text-sm hidden"></div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Handle quiz submission
+        document.getElementById('submit-quiz').addEventListener('click', function() {
+            let score = 0;
+            let totalQuestions = quizData.length;
+            
+            quizData.forEach((question, index) => {
+                const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index}`);
+                
+                if (selected) {
+                    const answer = parseInt(selected.value);
+                    if (answer === question.correct) {
+                        score++;
+                        feedbackDiv.innerHTML = `<span class="text-green-600 font-semibold">✓ Correct!</span> ${question.explanation}`;
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="text-red-600 font-semibold">✗ Incorrect.</span> ${question.explanation}`;
+                    }
+                    feedbackDiv.classList.remove('hidden');
+                } else {
+                    feedbackDiv.innerHTML = `<span class="text-gray-600">No answer selected.</span>`;
+                    feedbackDiv.classList.remove('hidden');
+                }
+            });
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            const resultsDiv = document.getElementById('quiz-results');
+            const scoreDisplay = document.getElementById('score-display');
+            const feedbackDisplay = document.getElementById('feedback-display');
+            
+            scoreDisplay.textContent = `${score}/${totalQuestions} (${percentage}%)`;
+            
+            if (percentage >= 80) {
+                feedbackDisplay.innerHTML = `<span class="text-green-600 font-bold">Excellent! You've mastered the course content.</span><br><br>You're ready to implement AI tools effectively in your administrative work. Consider sharing this knowledge with your colleagues and department.`
+            } else if (percentage >= 60) {
+                feedbackDisplay.innerHTML = `<span class="text-yellow-600 font-bold">Good work! You understand the key concepts.</span><br><br>Review the questions you missed and consider revisiting the relevant sections of the course to strengthen your understanding.`
+            } else {
+                feedbackDisplay.innerHTML = `<span class="text-red-600 font-bold">Keep studying! Review the course material.</span><br><br>Take time to review the course sections, especially the areas where you had questions. The concepts will become clearer with additional study.`
+            }
+            
+            resultsDiv.classList.remove('hidden');
+            this.classList.add('hidden');
+        });
+
+        // Retake quiz functionality
+        document.getElementById('retake-quiz').addEventListener('click', function() {
+            // Reset all selections
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            
+            // Hide all feedback
+            document.querySelectorAll('[id^="feedback-"]').forEach(div => {
+                div.classList.add('hidden');
+                div.innerHTML = '';
+            });
+            
+            // Reset results
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('submit-quiz').classList.remove('hidden');
+        });
+
+        // Progress bar functionality
+        window.addEventListener('scroll', function() {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('progressFill').style.width = scrolled + '%';
+        });
+
+        // Navigation highlighting
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('nav-active'));
+                this.classList.add('nav-active');
+            });
+        });
+
+        // Initialize the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

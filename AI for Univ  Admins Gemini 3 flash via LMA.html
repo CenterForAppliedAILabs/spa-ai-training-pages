@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: Gemini 3 Flash</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --usu-blue: #002B5C;
+            --usu-gold: #FFC72C;
+            --usu-light-blue: #005696;
+            --usu-gray: #f4f4f4;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        .bg-usu-blue { background-color: var(--usu-blue); }
+        .text-usu-blue { color: var(--usu-blue); }
+        .bg-usu-gold { background-color: var(--usu-gold); }
+        .text-usu-gold { color: var(--usu-gold); }
+        .border-usu-gold { border-color: var(--usu-gold); }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        .quiz-option {
+            transition: all 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #f0f4f8;
+        }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="sticky-nav bg-usu-blue text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-usu-gold rounded-full flex items-center justify-center">
+                    <span class="text-usu-blue font-bold text-xl">AI</span>
+                </div>
+                <span class="font-bold text-lg tracking-tight uppercase">Admin Masterclass</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-semibold">
+                <a href="#intro" class="hover:text-usu-gold transition">Introduction</a>
+                <a href="#tools" class="hover:text-usu-gold transition">Tools</a>
+                <a href="#prompting" class="hover:text-usu-gold transition">Prompting</a>
+                <a href="#glossary" class="hover:text-usu-gold transition">Glossary</a>
+                <a href="#quiz" class="hover:text-usu-gold transition bg-usu-gold text-usu-blue px-4 py-1 rounded">Take Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="intro" class="relative bg-usu-blue py-20 overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+        </div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="text-4xl md:text-6xl text-white font-bold mb-6">University Admin AI Training: Gemini 3 Flash</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
+                Empowering academic leadership and operational staff with the tools, language, and logic to thrive in the era of Generative AI.
+            </p>
+            <a href="#tools" class="bg-usu-gold text-usu-blue font-bold py-3 px-8 rounded-full shadow-xl hover:bg-yellow-400 transition transform hover:-translate-y-1 inline-block">
+                Start Learning
+            </a>
+        </div>
+    </header>
+
+    <!-- Section: Getting Started -->
+    <section id="tools" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-usu-blue mb-4">Getting Started with AI Tools</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Modern Large Language Models (LLMs) function as highly sophisticated "reasoning engines" rather than simple search engines.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- ChatGPT -->
+                <div class="border-t-4 border-usu-gold p-8 bg-gray-50 rounded shadow-sm">
+                    <h3 class="text-2xl font-bold mb-4">ChatGPT (OpenAI)</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">The industry pioneer. Best for versatile reasoning, data analysis, and general content creation.</p>
+                    <ul class="text-sm space-y-2 mb-8">
+                        <li><strong>Step 1:</strong> Visit <a href="https://chatgpt.com" class="text-usu-blue underline">chatgpt.com</a></li>
+                        <li><strong>Step 2:</strong> Sign up with your university email.</li>
+                        <li><strong>Step 3:</strong> Start with simple requests to "get a feel" for the conversational flow.</li>
+                    </ul>
+                    <span class="text-xs uppercase font-bold text-gray-400 tracking-widest">Best for: Productivity</span>
+                </div>
+
+                <!-- Claude -->
+                <div class="border-t-4 border-usu-gold p-8 bg-gray-50 rounded shadow-sm">
+                    <h3 class="text-2xl font-bold mb-4">Claude (Anthropic)</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Known for "Constitutional AI." Excellent for processing large documents and writing in a human-like tone.</p>
+                    <ul class="text-sm space-y-2 mb-8">
+                        <li><strong>Step 1:</strong> Visit <a href="https://claude.ai" class="text-usu-blue underline">claude.ai</a></li>
+                        <li><strong>Step 2:</strong> Upload PDFs (Syllabi, Handbooks) to analyze them instantly.</li>
+                        <li><strong>Step 3:</strong> Use the "Projects" feature to organize your department notes.</li>
+                    </ul>
+                    <span class="text-xs uppercase font-bold text-gray-400 tracking-widest">Best for: Document Analysis</span>
+                </div>
+
+                <!-- Gemini -->
+                <div class="border-t-4 border-usu-gold p-8 bg-gray-50 rounded shadow-sm">
+                    <h3 class="text-2xl font-bold mb-4">Gemini (Google)</h3>
+                    <p class="text-sm text-gray-600 mb-6 leading-relaxed">Integrated with Google Workspace. Great for real-time information retrieval and integration with Docs/Sheets.</p>
+                    <ul class="text-sm space-y-2 mb-8">
+                        <li><strong>Step 1:</strong> Access via <a href="https://gemini.google.com" class="text-usu-blue underline">gemini.google.com</a></li>
+                        <li><strong>Step 2:</strong> Use the "@" feature to pull in data from your Google Drive.</li>
+                        <li><strong>Step 3:</strong> Ideal for cross-referencing campus schedules and emails.</li>
+                    </ul>
+                    <span class="text-xs uppercase font-bold text-gray-400 tracking-widest">Best for: Google Ecosystem</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Prompting Guidance -->
+    <section id="prompting" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-usu-blue mb-4">The Art of Prompting</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Mastering AI is about moving from "Ask" to "Instruct." We use the Ok/Good/Better framework to show you the difference.</p>
+            </div>
+
+            <div class="space-y-12">
+                <!-- Admissions -->
+                <div class="bg-white p-8 rounded-lg shadow-md border-l-8 border-usu-blue">
+                    <h3 class="text-2xl font-bold text-usu-blue mb-6">1. Admissions Department</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded border border-red-100">
+                            <h4 class="font-bold text-red-700 mb-2">Ok</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Write an email to a prospective student about our nursing program."</p>
+                            <p class="text-xs text-gray-500">Result: Generic, likely misses specific US University value propositions.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-100">
+                            <h4 class="font-bold text-yellow-700 mb-2">Good</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Write a professional email to a prospect interested in the RN to BSN program. Mention that it is flexible and online."</p>
+                            <p class="text-xs text-gray-500">Result: Better, but still lacks a call to action and "voice."</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded border border-green-100 relative">
+                            <h4 class="font-bold text-green-700 mb-2">Better (Professional)</h4>
+                            <div id="prompt-adm-1" class="text-sm italic text-gray-700 mb-4 bg-white p-2 border rounded">
+                                "Act as a Senior Admissions Counselor. Write a warm, encouraging email to a prospect named [Name] for our RN to BSN program. Structure: 1. Acknowledge their commitment to nursing. 2. Highlight our flexible 8-week courses. 3. Invite them to a Zoom info session this Tuesday. Tone: Professional yet empathetic."
+                            </div>
+                            <button onclick="copyText('prompt-adm-1')" class="text-xs bg-usu-blue text-white px-3 py-1 rounded hover:bg-blue-800 transition copy-btn">Copy Prompt</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registrar -->
+                <div class="bg-white p-8 rounded-lg shadow-md border-l-8 border-usu-blue">
+                    <h3 class="text-2xl font-bold text-usu-blue mb-6">2. Registrar's Office</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded border border-red-100">
+                            <h4 class="font-bold text-red-700 mb-2">Ok</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Explain transfer credit rules."</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-100">
+                            <h4 class="font-bold text-yellow-700 mb-2">Good</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Summarize this PDF policy on transfer credits into 5 bullet points for a student."</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded border border-green-100 relative">
+                            <h4 class="font-bold text-green-700 mb-2">Better (Professional)</h4>
+                            <div id="prompt-reg-1" class="text-sm italic text-gray-700 mb-4 bg-white p-2 border rounded">
+                                "Analyze the attached Transfer Credit Policy. Create a 'Frequently Asked Questions' document for staff training. Focus on: Residency requirements, time limits for science credits, and the process for appealing a credit denial. Use a professional table format."
+                            </div>
+                            <button onclick="copyText('prompt-reg-1')" class="text-xs bg-usu-blue text-white px-3 py-1 rounded hover:bg-blue-800 transition copy-btn">Copy Prompt</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Services -->
+                <div class="bg-white p-8 rounded-lg shadow-md border-l-8 border-usu-blue">
+                    <h3 class="text-2xl font-bold text-usu-blue mb-6">3. Student Services & Success</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded border border-red-100">
+                            <h4 class="font-bold text-red-700 mb-2">Ok</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"How can students study better?"</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-100">
+                            <h4 class="font-bold text-yellow-700 mb-2">Good</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Create a 1-week study plan for a student who is struggling with time management."</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded border border-green-100 relative">
+                            <h4 class="font-bold text-green-700 mb-2">Better (Professional)</h4>
+                            <div id="prompt-ss-1" class="text-sm italic text-gray-700 mb-4 bg-white p-2 border rounded">
+                                "Create a 'First-Year Success Resource Guide'. Focus on students who are working full-time. Include: 1. Strategies for reading academic journals quickly. 2. A checklist for contacting their advisor. 3. Three mindfulness techniques for exam stress. Use a supportive, coaching tone."
+                            </div>
+                            <button onclick="copyText('prompt-ss-1')" class="text-xs bg-usu-blue text-white px-3 py-1 rounded hover:bg-blue-800 transition copy-btn">Copy Prompt</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IT/Admin -->
+                <div class="bg-white p-8 rounded-lg shadow-md border-l-8 border-usu-blue">
+                    <h3 class="text-2xl font-bold text-usu-blue mb-6">4. IT & Data Privacy</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-red-50 p-4 rounded border border-red-100">
+                            <h4 class="font-bold text-red-700 mb-2">Ok</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Write an AI policy."</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-100">
+                            <h4 class="font-bold text-yellow-700 mb-2">Good</h4>
+                            <p class="text-sm italic text-gray-600 mb-4">"Draft a memo to faculty about using AI in the classroom safely."</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded border border-green-100 relative">
+                            <h4 class="font-bold text-green-700 mb-2">Better (Professional)</h4>
+                            <div id="prompt-it-1" class="text-sm italic text-gray-700 mb-4 bg-white p-2 border rounded">
+                                "Draft a professional memo to University Staff regarding AI Privacy Guidelines. Address: 1. Why inputting student PII (Personally Identifiable Information) into public AI is a FERPA violation. 2. Approved university AI tools. 3. Whom to contact for a security review of a new tool. Make it clear, authoritative, and helpful."
+                            </div>
+                            <button onclick="copyText('prompt-it-1')" class="text-xs bg-usu-blue text-white px-3 py-1 rounded hover:bg-blue-800 transition copy-btn">Copy Prompt</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Glossary -->
+    <section id="glossary" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-usu-blue mb-12 text-center">AI Glossary for Administrators</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="glossary-grid">
+                <!-- JS will inject terms here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Quiz -->
+    <section id="quiz" class="py-20 bg-usu-blue text-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto bg-white text-gray-900 rounded-xl p-8 shadow-2xl">
+                <h2 class="text-3xl font-bold text-usu-blue mb-2">Final Assessment</h2>
+                <p class="text-gray-600 mb-8 border-b pb-4">Test your knowledge of the materials covered in this guide.</p>
+                
+                <div id="quiz-container">
+                    <!-- JS will inject questions here -->
+                </div>
+
+                <div id="quiz-results" class="hidden mt-8 text-center p-6 bg-gray-50 rounded-lg border-2 border-dashed border-usu-gold">
+                    <h3 class="text-2xl font-bold mb-2">Quiz Complete!</h3>
+                    <p class="text-lg" id="score-text"></p>
+                    <button onclick="resetQuiz()" class="mt-4 bg-usu-blue text-white px-6 py-2 rounded hover:bg-blue-900">Retake Quiz</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-12 border-t">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center items-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-usu-blue rounded-full flex items-center justify-center">
+                    <span class="text-usu-gold font-bold text-sm">AI</span>
+                </div>
+                <span class="font-bold text-usu-blue tracking-widest uppercase">United States University</span>
+            </div>
+            <p class="text-gray-500 text-sm">© 2023-2024. This guide is for educational purposes for University Staff and Administrators.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA ---
+        const glossaryTerms = [
+            { term: "LLM", definition: "Large Language Model. AI trained on vast amounts of text (e.g., GPT-4)." },
+            { term: "Generative AI", definition: "AI that creates new content (text, images, code) rather than just analyzing data." },
+            { term: "Hallucination", definition: "When an AI confidently presents incorrect or fabricated information as fact." },
+            { term: "Prompt Engineering", definition: "The practice of crafting specific inputs to get higher-quality outputs from AI." },
+            { term: "Zero-shot", definition: "Asking an AI to perform a task without providing any examples." },
+            { term: "Few-shot", definition: "Providing a few examples within the prompt to guide the AI's output style." },
+            { term: "Token", definition: "Chunks of characters used by AI to process text (roughly 0.75 words per token)." },
+            { term: "Fine-tuning", definition: "The process of training a pre-existing model on a specialized dataset." },
+            { term: "NLP", definition: "Natural Language Processing. The ability of computers to understand human language." },
+            { term: "Transformer", definition: "The specific neural network architecture that makes modern LLMs possible." },
+            { term: "RAG", definition: "Retrieval-Augmented Generation. Connecting AI to a specific database (like a handbook) for accuracy." },
+            { term: "Multi-modal", definition: "AI that can process multiple types of input (text, audio, images)." },
+            { term: "Parameters", definition: "The variables in a model that it 'learned' during training; roughly indicates model complexity." },
+            { term: "Bias", definition: "Systematic errors in AI output caused by skewed or unrepresentative training data." },
+            { term: "Neural Network", definition: "A computer system designed to mimic the way the human brain processes information." },
+            { term: "Context Window", definition: "The maximum amount of information (tokens) the AI can 'remember' at one time." },
+            { term: "Temperature", definition: "A setting that controls the 'creativity' or randomness of AI responses." },
+            { term: "Deep Learning", definition: "A subset of machine learning based on artificial neural networks with many layers." },
+            { term: "PII", definition: "Personally Identifiable Information. Data that must never be shared with public AI models." },
+            { term: "FERPA", definition: "Family Educational Rights and Privacy Act. Crucial regulation for AI use in US Higher Ed." }
+        ];
+
+        const quizQuestions = [
+            { q: "What does 'LLM' stand for?", options: ["Large Learning Machine", "Large Language Model", "Level Logical Model", "Local Language Matrix"], correct: 1 },
+            { q: "Which tool is best known for its integration with Google Docs/Drive?", options: ["ChatGPT", "Claude", "Gemini", "Siri"], correct: 2 },
+            { q: "A 'hallucination' in AI refers to:", options: ["Slow processing speed", "A virus", "Fabricated or incorrect info stated as fact", "The AI becoming self-aware"], correct: 2 },
+            { q: "Prompt Engineering is the practice of:", options: ["Coding AI models", "Designing better inputs for AI", "Repairing computer hardware", "Managing database servers"], correct: 1 },
+            { q: "Which law is most critical regarding student data in the US?", options: ["HIPAA", "GDPR", "FERPA", "CIPA"], correct: 2 },
+            { q: "Using the Ok/Good/Better framework, a 'Better' prompt usually includes:", options: ["More keywords", "Specific context, role, and formatting", "The word 'Please'", "All capital letters"], correct: 1 },
+            { q: "What is a 'Token' in AI terminology?", options: ["A digital coin", "A unit of text processing", "A security password", "A user profile"], correct: 1 },
+            { q: "Which AI provider created Claude?", options: ["OpenAI", "Google", "Anthropic", "Microsoft"], correct: 2 },
+            { q: "What is RAG (Retrieval-Augmented Generation)?", options: ["A way to speed up the internet", "Connecting AI to a specific source of truth", "A type of video compression", "An AI image generator"], correct: 1 },
+            { q: "Zero-shot prompting means:", options: ["The prompt failed", "Providing no examples to the AI", "Giving the AI 100 examples", "Using AI without an internet connection"], correct: 1 },
+            { q: "PII stands for:", options: ["Personal Internet Information", "Personally Identifiable Information", "Private Institutional Intranet", "Public Image Indicator"], correct: 1 },
+            { q: "Temperature in AI settings controls:", options: ["The heat of the server", "The randomness/creativity of output", "The speed of the response", "The font size"], correct: 1 },
+            { q: "Which tool is generally praised for its 'human-like' writing and large document handling?", options: ["Claude", "Excel", "Gemini", "Llama"], correct: 0 },
+            { q: "Generative AI can create:", options: ["Text only", "Images only", "Code only", "All of the above"], correct: 3 },
+            { q: "Why is putting student names into public ChatGPT risky?", options: ["It might crash the app", "It violates privacy and FERPA", "The AI won't know the student", "It costs more money"], correct: 1 },
+            { q: "A 'Context Window' refers to:", options: ["The size of the browser window", "How much text the AI can process at once", "The login screen", "The help menu"], correct: 1 },
+            { q: "Bias in AI usually stems from:", options: ["Hardware failures", "The training data", "The color of the UI", "High electricity usage"], correct: 1 },
+            { q: "Which of these is a Department-specific use case for AI?", options: ["Drafting syllabus policies", "Summarizing transfer credits", "Writing enrollment emails", "All of the above"], correct: 3 },
+            { q: "Few-shot prompting involves:", options: ["Giving the AI a few examples to follow", "Restarting the AI several times", "Using small words", "Limiting the AI to 3 words"], correct: 0 },
+            { q: "What is the primary role of an AI for an Administrator?", options: ["Replacing human workers", "Reasoning and productivity partner", "Checking emails only", "Data storage"], correct: 1 }
+        ];
+
+        // --- CORE LOGIC ---
+
+        function init() {
+            renderGlossary();
+            renderQuiz();
+        }
+
+        function renderGlossary() {
+            const grid = document.getElementById('glossary-grid');
+            glossaryTerms.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-4 border border-gray-100 rounded bg-gray-50 hover:shadow-md transition";
+                card.innerHTML = `
+                    <h4 class="font-bold text-usu-blue mb-1">${item.term}</h4>
+                    <p class="text-xs text-gray-600">${item.definition}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const q = quizQuestions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="mb-4">
+                    <span class="text-xs font-bold text-usu-blue uppercase">Question ${currentQuestion + 1} of ${quizQuestions.length}</span>
+                    <h3 class="text-xl font-semibold mt-2">${q.q}</h3>
+                </div>
+                <div class="space-y-3">
+                    ${q.options.map((opt, idx) => `
+                        <button onclick="handleAnswer(${idx})" class="quiz-option w-full text-left p-4 border rounded-lg hover:border-usu-blue transition">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function handleAnswer(choice) {
+            const q = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            // Disable all buttons
+            options.forEach(btn => btn.disabled = true);
+
+            if (choice === q.correct) {
+                options[choice].classList.add('correct');
+                score++;
+            } else {
+                options[choice].classList.add('incorrect');
+                options[q.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizQuestions.length) {
+                    renderQuiz();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('quiz-results');
+            results.classList.remove('hidden');
+            const percent = (score / quizQuestions.length) * 100;
+            document.getElementById('score-text').innerText = `You scored ${score} out of ${quizQuestions.length} (${percent}%).`;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            renderQuiz();
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                btn.classList.replace('bg-usu-blue', 'bg-green-600');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-usu-blue');
+                }, 2000);
+            });
+        }
+
+        // Run init
+        window.onload = init;
+    </script>
+</body>
+</html>

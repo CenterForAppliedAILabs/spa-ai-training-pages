@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: Claude Opus 4.5 | Powered by Claude Opus 4.5</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* ============================================
+           CUSTOM STYLES
+           Edit these to customize the course appearance
+           ============================================ */
+        
+        :root {
+            /* Primary color scheme - Edit these to change brand colors */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-800: #1e40af;
+            --primary-900: #1e3a8a;
+            
+            /* Accent color for highlights */
+            --accent: #10b981;
+            --accent-dark: #059669;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Smooth scrolling for the content area */
+        .content-scroll {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar styling */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Active navigation item indicator */
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--primary-50), transparent);
+            border-left: 3px solid var(--primary-600);
+        }
+        
+        /* Progress ring animation */
+        .progress-ring {
+            transition: stroke-dashoffset 0.5s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        /* Module card hover effects */
+        .module-card {
+            transition: all 0.3s ease;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Fade-in animation for content sections */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Quiz option styling */
+        .quiz-option {
+            transition: all 0.2s ease;
+        }
+        
+        .quiz-option:hover:not(.selected):not(.correct):not(.incorrect) {
+            border-color: var(--primary-500);
+            background-color: var(--primary-50);
+        }
+        
+        .quiz-option.selected {
+            border-color: var(--primary-600);
+            background-color: var(--primary-100);
+        }
+        
+        .quiz-option.correct {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+        
+        /* Checklist item styling */
+        .checklist-item input:checked + label {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+        
+        /* Mobile sidebar overlay */
+        .sidebar-overlay {
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Print styles for certificates/summaries */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    
+    <!-- ============================================
+         MAIN APPLICATION CONTAINER
+         ============================================ -->
+    <div id="app" class="flex min-h-screen">
+        
+        <!-- ============================================
+             SIDEBAR NAVIGATION
+             Contains course modules and progress tracker
+             ============================================ -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+            
+            <!-- Course Header -->
+            <div class="p-6 border-b border-slate-200 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-medium bg-white/20 px-2 py-1 rounded-full">COURSE</span>
+                </div>
+                <h1 class="text-lg font-bold leading-tight">University Admin AI Training: Claude Opus 4.5</h1>
+                <p class="text-blue-100 text-sm mt-1">Powered by Claude Opus 4.5</p>
+            </div>
+            
+            <!-- Progress Section -->
+            <div class="p-4 border-b border-slate-200 bg-slate-50">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-slate-700">Your Progress</span>
+                    <span id="progress-percent" class="text-sm font-bold text-blue-600">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <p id="progress-text" class="text-xs text-slate-500 mt-2">0 of 7 modules completed</p>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 overflow-y-auto custom-scrollbar p-3">
+                <ul id="nav-menu" class="space-y-1">
+                    <!-- Navigation items will be dynamically generated -->
+                </ul>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
+                <button onclick="resetProgress()" class="w-full text-sm text-slate-600 hover:text-slate-800 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-slate-200 transition-colors">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    Reset Progress
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-40 lg:hidden hidden" onclick="toggleSidebar()"></div>
+        
+        <!-- ============================================
+             MAIN CONTENT AREA
+             Displays the active module content
+             ============================================ -->
+        <main class="flex-1 flex flex-col min-h-screen">
+            
+            <!-- Top Navigation Bar -->
+            <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-4 lg:px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <!-- Mobile Menu Button -->
+                        <button onclick="toggleSidebar()" class="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
+                            <i data-lucide="menu" class="w-5 h-5 text-slate-600"></i>
+                        </button>
+                        
+                        <!-- Breadcrumb -->
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-slate-400">Course</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                            <span id="current-module-title" class="text-slate-700 font-medium">Welcome</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleBookmark()" id="bookmark-btn" class="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="Bookmark this module">
+                            <i data-lucide="bookmark" class="w-5 h-5 text-slate-500"></i>
+                        </button>
+                        <button onclick="printCertificate()" class="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                            <i data-lucide="award" class="w-4 h-4"></i>
+                            Certificate
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Container -->
+            <div id="content-container" class="flex-1 overflow-y-auto content-scroll custom-scrollbar">
+                <div id="module-content" class="max-w-4xl mx-auto px-4 lg:px-8 py-8">
+                    <!-- Module content will be dynamically loaded here -->
+                </div>
+            </div>
+            
+            <!-- Bottom Navigation -->
+            <footer class="sticky bottom-0 bg-white border-t border-slate-200 px-4 lg:px-8 py-4 no-print">
+                <div class="max-w-4xl mx-auto flex items-center justify-between">
+                    <button id="prev-btn" onclick="navigateModule(-1)" class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Previous</span>
+                    </button>
+                    
+                    <button id="complete-btn" onclick="toggleModuleComplete()" class="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span id="complete-btn-text">Mark Complete</span>
+                    </button>
+                    
+                    <button id="next-btn" onclick="navigateModule(1)" class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="hidden sm:inline">Next</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </footer>
+        </main>
+    </div>
+    
+    <!-- ============================================
+         CERTIFICATE MODAL
+         Displays completion certificate
+         ============================================ -->
+    <div id="certificate-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 text-center relative">
+            <button onclick="closeCertificateModal()" class="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+            </button>
+            
+            <div id="certificate-content">
+                <div class="border-4 border-blue-600 rounded-xl p-8 bg-gradient-to-br from-blue-50 to-white">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                            <i data-lucide="award" class="w-8 h-8 text-white"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Certificate of Completion</h2>
+                    <p class="text-slate-500 mb-6">This certifies that</p>
+                    <input id="certificate-name" type="text" placeholder="Enter Your Name" class="text-2xl font-semibold text-center border-b-2 border-slate-300 focus:border-blue-600 outline-none pb-2 mb-6 w-full max-w-md">
+                    <p class="text-slate-600 mb-2">has successfully completed</p>
+                    <h3 class="text-xl font-bold text-blue-700 mb-6">University Admin AI Training: Claude Opus 4.5: Powered by Claude Opus 4.5</h3>
+                    <div id="completion-status" class="text-sm text-slate-500 mb-4"></div>
+                    <p class="text-sm text-slate-400" id="certificate-date"></p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-center gap-4">
+                <button onclick="window.print()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                    <i data-lucide="printer" class="w-4 h-4 inline mr-2"></i>
+                    Print Certificate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT - COURSE DATA & FUNCTIONALITY
+         ============================================ -->
+    <script>
+        // ============================================
+        // COURSE CONTENT DATA
+        // Edit this section to modify course content
+        // Each module has: id, title, icon, and content
+        // ============================================
+        
+        const courseData = {
+            title: "University Admin AI Training: Claude Opus 4.5",
+            subtitle: "Powered by Claude Opus 4.5",
+            modules: [
+                // ----------------------------------------
+                // MODULE 0: Welcome & Introduction
+                // ----------------------------------------
+                {
+                    id: 0,
+                    title: "Welcome & Overview",
+                    icon: "home",
+                    content: `
+                        <div class="fade-in">
+                            <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-2xl p-8 mb-8">
+                                <h1 class="text-3xl lg:text-4xl font-bold mb-4">Welcome to University Admin AI Training: Claude Opus 4.5</h1>
+                                <p class="text-blue-100 text-lg">A comprehensive beginner's guide to understanding and implementing artificial intelligence in higher education administration.</p>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                                <div class="bg-white rounded-xl p-6 border border-slate-200 module-card">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                                        <i data-lucide="target" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold text-lg mb-2">Course Objectives</h3>
+                                    <ul class="text-slate-600 space-y-2 text-sm">
+                                        <li>• Understand fundamental AI concepts</li>
+                                        <li>• Identify AI applications in higher ed</li>
+                                        <li>• Evaluate AI tools for your institution</li>
+                                        <li>• Navigate ethical considerations</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 border border-slate-200 module-card">
+                                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                                        <i data-lucide="clock" class="w-6 h-6 text-emerald-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold text-lg mb-2">Time Investment</h3>
+                                    <ul class="text-slate-600 space-y-2 text-sm">
+                                        <li>• 7 comprehensive modules</li>
+                                        <li>• Approximately 2-3 hours total</li>
+                                        <li>• Self-paced learning</li>
+                                        <li>• Interactive quizzes included</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8">
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="lightbulb" class="w-6 h-6 text-amber-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-amber-800 mb-1">No Technical Background Required</h3>
+                                        <p class="text-amber-700 text-sm">This course is designed specifically for administrators without a technical background. We'll explain all concepts in plain language with practical examples relevant to your work.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-2xl font-bold text-slate-800 mb-4">What You'll Learn</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200">
+                                    <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">1</span>
+                                    <div>
+                                        <h4 class="font-semibold">Core AI Concepts</h4>
+                                        <p class="text-slate-600 text-sm">Demystify machine learning, neural networks, and generative AI in accessible terms.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200">
+                                    <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">2</span>
+                                    <div>
+                                        <h4 class="font-semibold">Higher Ed Applications</h4>
+                                        <p class="text-slate-600 text-sm">Explore how AI is transforming admissions, student services, operations, and more.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200">
+                                    <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">3</span>
+                                    <div>
+                                        <h4 class="font-semibold">Practical Implementation</h4>
+                                        <p class="text-slate-600 text-sm">Learn frameworks for evaluating, piloting, and scaling AI initiatives.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-200">
+                                    <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">4</span>
+                                    <div>
+                                        <h4 class="font-semibold">Ethics & Governance</h4>
+                                        <p class="text-slate-600 text-sm">Understand critical considerations around bias, privacy, and responsible AI use.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 1: Introduction to AI
+                // ----------------------------------------
+                {
+                    id: 1,
+                    title: "Introduction to AI",
+                    icon: "cpu",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">Introduction to Artificial Intelligence</h1>
+                            <p class="text-slate-500 mb-8">Understanding the basics of AI technology</p>
+                            
+                            <div class="prose max-w-none">
+                                <div class="bg-white rounded-xl p-6 border border-slate-200 mb-6">
+                                    <h2 class="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                        <i data-lucide="help-circle" class="w-5 h-5 text-blue-600"></i>
+                                        What is Artificial Intelligence?
+                                    </h2>
+                                    <p class="text-slate-600 mb-4">Artificial Intelligence (AI) refers to computer systems designed to perform tasks that typically require human intelligence. These tasks include:</p>
+                                    <ul class="list-disc list-inside text-slate-600 space-y-2 ml-4">
+                                        <li>Understanding and generating natural language</li>
+                                        <li>Recognizing patterns in data</li>
+                                        <li>Making decisions and predictions</li>
+                                        <li>Learning from experience</li>
+                                        <li>Solving complex problems</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 rounded-xl p-6 border border-blue-200 mb-6">
+                                    <h3 class="font-semibold text-blue-800 mb-3">Key Insight</h3>
+                                    <p class="text-blue-700">AI isn't about creating conscious machines—it's about building systems that can process information and make decisions in ways that <em>appear</em> intelligent and produce useful outcomes.</p>
+                                </div>
+                                
+                                <h2 class="text-xl font-semibold text-slate-800 mb-4">Types of AI</h2>
+                                
+                                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-white rounded-xl p-5 border border-slate-200">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="focus" class="w-5 h-5 text-purple-600"></i>
+                                            </div>
+                                            <h4 class="font-semibold">Narrow AI</h4>
+                                        </div>
+                                        <p class="text-slate-600 text-sm">Designed for specific tasks like spam filtering, recommendation systems, or chatbots. This is what we interact with today.</p>
+                                    </div>
+                                    
+                                    <div class="bg-white rounded-xl p-5 border border-slate-200">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="brain" class="w-5 h-5 text-amber-600"></i>
+                                            </div>
+                                            <h4 class="font-semibold">General AI</h4>
+                                        </div>
+                                        <p class="text-slate-600 text-sm">Theoretical AI that could perform any intellectual task a human can. This doesn't exist yet and remains a research goal.</p>
+                                    </div>
+                                </div>
+                                
+                                <h2 class="text-xl font-semibold text-slate-800 mb-4">Brief History</h2>
+                                
+                                <div class="relative border-l-2 border-blue-200 ml-4 space-y-6 mb-6">
+                                    <div class="relative pl-6">
+                                        <div class="absolute -left-2 top-1 w-4 h-4 bg-blue-600 rounded-full"></div>
+                                        <p class="text-sm text-slate-500">1950s</p>
+                                        <p class="font-medium">AI term coined; early research begins</p>
+                                    </div>
+                                    <div class="relative pl-6">
+                                        <div class="absolute -left-2 top-1 w-4 h-4 bg-blue-400 rounded-full"></div>
+                                        <p class="text-sm text-slate-500">1980s-90s</p>
+                                        <p class="font-medium">Expert systems; machine learning advances</p>
+                                    </div>
+                                    <div class="relative pl-6">
+                                        <div class="absolute -left-2 top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                                        <p class="text-sm text-slate-500">2010s</p>
+                                        <p class="font-medium">Deep learning revolution; AI assistants emerge</p>
+                                    </div>
+                                    <div class="relative pl-6">
+                                        <div class="absolute -left-2 top-1 w-4 h-4 bg-emerald-500 rounded-full"></div>
+                                        <p class="text-sm text-slate-500">2020s</p>
+                                        <p class="font-medium">Generative AI explosion; ChatGPT, DALL-E, and beyond</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-slate-800 text-white rounded-xl p-6">
+                                    <h3 class="font-semibold mb-3 flex items-center gap-2">
+                                        <i data-lucide="quote" class="w-5 h-5 text-blue-400"></i>
+                                        Why This Matters for Universities
+                                    </h3>
+                                    <p class="text-slate-300">Universities are uniquely positioned at the intersection of AI development (through research) and AI impact (on students, faculty, and operations). Understanding AI isn't optional—it's essential for effective administration.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 2: Key AI Concepts
+                // ----------------------------------------
+                {
+                    id: 2,
+                    title: "Key AI Concepts",
+                    icon: "book-open",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">Key AI Concepts & Terminology</h1>
+                            <p class="text-slate-500 mb-8">Master the vocabulary of artificial intelligence</p>
+                            
+                            <div class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl p-6 mb-8">
+                                <p class="text-lg">Understanding AI terminology is crucial for evaluating vendors, communicating with IT teams, and making informed decisions about AI adoption.</p>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                                            <i data-lucide="git-branch" class="w-5 h-5 text-blue-600"></i>
+                                            Machine Learning (ML)
+                                        </h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-slate-600 mb-4">A subset of AI where systems learn from data rather than being explicitly programmed. Think of it as teaching by example rather than by instruction.</p>
+                                        <div class="bg-blue-50 rounded-lg p-4">
+                                            <p class="text-sm text-blue-800"><strong>University Example:</strong> A system that learns to predict which prospective students are likely to enroll based on historical admissions data.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                                            <i data-lucide="network" class="w-5 h-5 text-purple-600"></i>
+                                            Neural Networks & Deep Learning
+                                        </h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-slate-600 mb-4">Neural networks are computing systems loosely inspired by the brain. Deep learning uses many layers of these networks to find complex patterns in data.</p>
+                                        <div class="bg-purple-50 rounded-lg p-4">
+                                            <p class="text-sm text-purple-800"><strong>University Example:</strong> Image recognition systems that can automatically categorize thousands of archival photos in the library.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                                            <i data-lucide="message-square" class="w-5 h-5 text-emerald-600"></i>
+                                            Natural Language Processing (NLP)
+                                        </h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-slate-600 mb-4">AI's ability to understand, interpret, and generate human language. This powers chatbots, translation, and text analysis.</p>
+                                        <div class="bg-emerald-50 rounded-lg p-4">
+                                            <p class="text-sm text-emerald-800"><strong>University Example:</strong> Chatbots that answer student questions about financial aid, registration, and campus services 24/7.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                                            <i data-lucide="sparkles" class="w-5 h-5 text-amber-600"></i>
+                                            Generative AI
+                                        </h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-slate-600 mb-4">AI systems that can create new content—text, images, code, music—based on patterns learned from training data. ChatGPT and DALL-E are popular examples.</p>
+                                        <div class="bg-amber-50 rounded-lg p-4">
+                                            <p class="text-sm text-amber-800"><strong>University Example:</strong> Drafting initial versions of policy documents, creating marketing content, or generating personalized student communications.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                                            <i data-lucide="database" class="w-5 h-5 text-rose-600"></i>
+                                            Large Language Models (LLMs)
+                                        </h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <p class="text-slate-600 mb-4">Massive AI models trained on vast amounts of text data. They power modern chatbots and can understand context, follow instructions, and generate human-like text.</p>
+                                        <div class="bg-rose-50 rounded-lg p-4">
+                                            <p class="text-sm text-rose-800"><strong>Examples:</strong> GPT-4, Claude, Gemini, and LLaMA are all large language models with different capabilities and use cases.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 p-6 bg-slate-100 rounded-xl">
+                                <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                    <i data-lucide="check-square" class="w-5 h-5 text-slate-700"></i>
+                                    Quick Reference Glossary
+                                </h3>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div><strong>Algorithm:</strong> A set of rules or instructions for solving a problem</div>
+                                    <div><strong>Training Data:</strong> The data used to teach an AI system</div>
+                                    <div><strong>Model:</strong> The trained AI system ready to make predictions</div>
+                                    <div><strong>Prompt:</strong> The input/question given to a generative AI</div>
+                                    <div><strong>Hallucination:</strong> When AI generates false information confidently</div>
+                                    <div><strong>Fine-tuning:</strong> Customizing a pre-trained model for specific tasks</div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 3: AI in Higher Education
+                // ----------------------------------------
+                {
+                    id: 3,
+                    title: "AI in Higher Education",
+                    icon: "graduation-cap",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">AI in Higher Education</h1>
+                            <p class="text-slate-500 mb-8">How AI is reshaping university operations and student experience</p>
+                            
+                            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                                <div class="bg-blue-600 text-white rounded-xl p-5 text-center">
+                                    <div class="text-3xl font-bold mb-1">67%</div>
+                                    <div class="text-blue-100 text-sm">of universities are exploring AI adoption</div>
+                                </div>
+                                <div class="bg-emerald-600 text-white rounded-xl p-5 text-center">
+                                    <div class="text-3xl font-bold mb-1">$3.68B</div>
+                                    <div class="text-emerald-100 text-sm">AI in education market by 2027</div>
+                                </div>
+                                <div class="bg-purple-600 text-white rounded-xl p-5 text-center">
+                                    <div class="text-3xl font-bold mb-1">40%</div>
+                                    <div class="text-purple-100 text-sm">potential time savings on admin tasks</div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Current AI Applications in Universities</h2>
+                            
+                            <div class="space-y-4 mb-8">
+                                <details class="bg-white rounded-xl border border-slate-200 group" open>
+                                    <summary class="flex items-center justify-between p-5 cursor-pointer">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                                            </div>
+                                            <span class="font-semibold">Admissions & Enrollment</span>
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform"></i>
+                                    </summary>
+                                    <div class="px-5 pb-5 text-slate-600">
+                                        <ul class="space-y-2 ml-13">
+                                            <li>• <strong>Predictive enrollment modeling:</strong> Forecast which admitted students will enroll</li>
+                                            <li>• <strong>Application processing:</strong> Initial screening and document verification</li>
+                                            <li>• <strong>Chatbots:</strong> 24/7 answers to prospective student questions</li>
+                                            <li>• <strong>Personalized outreach:</strong> Tailored communications based on student interests</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                
+                                <details class="bg-white rounded-xl border border-slate-200 group">
+                                    <summary class="flex items-center justify-between p-5 cursor-pointer">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="heart-handshake" class="w-5 h-5 text-emerald-600"></i>
+                                            </div>
+                                            <span class="font-semibold">Student Success & Retention</span>
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform"></i>
+                                    </summary>
+                                    <div class="px-5 pb-5 text-slate-600">
+                                        <ul class="space-y-2 ml-13">
+                                            <li>• <strong>Early alert systems:</strong> Identify at-risk students before they struggle</li>
+                                            <li>• <strong>Intelligent tutoring:</strong> Personalized learning support</li>
+                                            <li>• <strong>Course recommendations:</strong> Suggest optimal course selections</li>
+                                            <li>• <strong>Career guidance:</strong> Match students with opportunities</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                
+                                <details class="bg-white rounded-xl border border-slate-200 group">
+                                    <summary class="flex items-center justify-between p-5 cursor-pointer">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="building" class="w-5 h-5 text-purple-600"></i>
+                                            </div>
+                                            <span class="font-semibold">Operations & Facilities</span>
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform"></i>
+                                    </summary>
+                                    <div class="px-5 pb-5 text-slate-600">
+                                        <ul class="space-y-2 ml-13">
+                                            <li>• <strong>Space optimization:</strong> Smart scheduling of rooms and resources</li>
+                                            <li>• <strong>Energy management:</strong> Predictive HVAC and lighting control</li>
+                                            <li>• <strong>Maintenance prediction:</strong> Anticipate equipment failures</li>
+                                            <li>• <strong>Parking optimization:</strong> Real-time availability and routing</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                                
+                                <details class="bg-white rounded-xl border border-slate-200 group">
+                                    <summary class="flex items-center justify-between p-5 cursor-pointer">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="file-text" class="w-5 h-5 text-amber-600"></i>
+                                            </div>
+                                            <span class="font-semibold">Administrative Tasks</span>
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform"></i>
+                                    </summary>
+                                    <div class="px-5 pb-5 text-slate-600">
+                                        <ul class="space-y-2 ml-13">
+                                            <li>• <strong>Document processing:</strong> Automated form handling and data extraction</li>
+                                            <li>• <strong>Meeting scheduling:</strong> AI assistants for coordination</li>
+                                            <li>• <strong>Report generation:</strong> Automated analytics and summaries</li>
+                                            <li>• <strong>Email management:</strong> Smart categorization and response drafting</li>
+                                        </ul>
+                                    </div>
+                                </details>
+                            </div>
+                            
+                            <div class="bg-rose-50 border border-rose-200 rounded-xl p-6">
+                                <h3 class="font-semibold text-rose-800 mb-3 flex items-center gap-2">
+                                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                                    Challenges to Consider
+                                </h3>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm text-rose-700">
+                                    <div>• Data privacy and FERPA compliance</div>
+                                    <div>• Integration with legacy systems</div>
+                                    <div>• Faculty and staff resistance</div>
+                                    <div>• Budget and resource constraints</div>
+                                    <div>• Algorithmic bias concerns</div>
+                                    <div>• Need for ongoing training</div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 4: Practical Applications
+                // ----------------------------------------
+                {
+                    id: 4,
+                    title: "Practical Applications",
+                    icon: "wrench",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">Practical AI Applications for Administrators</h1>
+                            <p class="text-slate-500 mb-8">Hands-on ways to leverage AI in your daily work</p>
+                            
+                            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl p-6 mb-8">
+                                <h2 class="text-xl font-semibold mb-2">Start Small, Think Big</h2>
+                                <p class="text-emerald-100">You don't need a major IT initiative to start using AI. Many tools are available today that can immediately improve your productivity.</p>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Immediate Opportunities</h2>
+                            
+                            <div class="grid gap-6 mb-8">
+                                <div class="bg-white rounded-xl border border-slate-200 p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="pen-tool" class="w-6 h-6 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-lg mb-2">Writing & Communication</h3>
+                                            <p class="text-slate-600 mb-3">Use AI to draft, edit, and refine written communications.</p>
+                                            <div class="bg-slate-50 rounded-lg p-4 text-sm">
+                                                <p class="font-medium text-slate-700 mb-2">Try This Today:</p>
+                                                <ul class="text-slate-600 space-y-1">
+                                                    <li>• Draft email responses to common inquiries</li>
+                                                    <li>• Summarize long documents or reports</li>
+                                                    <li>• Create multiple versions of announcements for different audiences</li>
+                                                    <li>• Proofread and improve clarity of policy documents</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="bar-chart-2" class="w-6 h-6 text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-lg mb-2">Data Analysis & Reporting</h3>
+                                            <p class="text-slate-600 mb-3">Let AI help you understand and present data more effectively.</p>
+                                            <div class="bg-slate-50 rounded-lg p-4 text-sm">
+                                                <p class="font-medium text-slate-700 mb-2">Try This Today:</p>
+                                                <ul class="text-slate-600 space-y-1">
+                                                    <li>• Ask AI to explain trends in your enrollment data</li>
+                                                    <li>• Generate executive summaries from detailed reports</li>
+                                                    <li>• Create talking points for board presentations</li>
+                                                    <li>• Identify patterns in student feedback</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="calendar" class="w-6 h-6 text-amber-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-lg mb-2">Meeting & Project Management</h3>
+                                            <p class="text-slate-600 mb-3">Streamline meetings and project coordination with AI assistance.</p>
+                                            <div class="bg-slate-50 rounded-lg p-4 text-sm">
+                                                <p class="font-medium text-slate-700 mb-2">Try This Today:</p>
+                                                <ul class="text-slate-600 space-y-1">
+                                                    <li>• Generate meeting agendas from previous notes</li>
+                                                    <li>• Create action items from meeting transcripts</li>
+                                                    <li>• Draft project timelines and milestones</li>
+                                                    <li>• Prepare briefing documents for stakeholders</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Prompt Engineering Tips</h2>
+                            
+                            <div class="bg-slate-800 text-white rounded-xl p-6 mb-8">
+                                <p class="text-slate-300 mb-4">The quality of AI output depends heavily on how you ask. Here's a formula for better prompts:</p>
+                                <div class="bg-slate-700 rounded-lg p-4 font-mono text-sm mb-4">
+                                    <span class="text-blue-400">[Role]</span> + <span class="text-emerald-400">[Context]</span> + <span class="text-amber-400">[Task]</span> + <span class="text-purple-400">[Format]</span>
+                                </div>
+                                <div class="text-sm space-y-2">
+                                    <p><span class="text-blue-400">Role:</span> "You are a university communications specialist..."</p>
+                                    <p><span class="text-emerald-400">Context:</span> "...at a mid-sized public university announcing a tuition increase..."</p>
+                                    <p><span class="text-amber-400">Task:</span> "...write an email to parents that explains the reasons and maintains goodwill..."</p>
+                                    <p><span class="text-purple-400">Format:</span> "...in a formal but warm tone, under 300 words, with bullet points for key facts."</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                                <h3 class="font-semibold text-blue-800 mb-3">🎯 Action Checklist</h3>
+                                <div class="space-y-3">
+                                    <label class="checklist-item flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="w-5 h-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                                        <label class="text-blue-700">Create an account on a generative AI platform (ChatGPT, Claude, etc.)</label>
+                                    </label>
+                                    <label class="checklist-item flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="w-5 h-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                                        <label class="text-blue-700">Use AI to draft one routine email this week</label>
+                                    </label>
+                                    <label class="checklist-item flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="w-5 h-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                                        <label class="text-blue-700">Ask AI to summarize a report you recently received</label>
+                                    </label>
+                                    <label class="checklist-item flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" class="w-5 h-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                                        <label class="text-blue-700">Practice the prompt formula with a real work task</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 5: Ethics & Governance
+                // ----------------------------------------
+                {
+                    id: 5,
+                    title: "Ethics & Governance",
+                    icon: "shield",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">AI Ethics & Governance</h1>
+                            <p class="text-slate-500 mb-8">Navigating the responsible use of AI in higher education</p>
+                            
+                            <div class="bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-xl p-6 mb-8">
+                                <div class="flex items-start gap-4">
+                                    <i data-lucide="alert-circle" class="w-8 h-8 flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <h2 class="text-xl font-semibold mb-2">Why Ethics Matter</h2>
+                                        <p class="text-rose-100">As an administrator, you'll be called upon to make decisions about AI adoption. Understanding ethical implications isn't just responsible—it's essential for protecting your institution and students.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Key Ethical Considerations</h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+                                        <i data-lucide="scale" class="w-5 h-5 text-red-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold mb-2">Bias & Fairness</h3>
+                                    <p class="text-slate-600 text-sm mb-3">AI systems can perpetuate or amplify existing biases in training data, potentially affecting admissions, hiring, and student services.</p>
+                                    <div class="bg-red-50 rounded-lg p-3 text-xs text-red-700">
+                                        <strong>Example:</strong> An AI admissions tool trained on historical data might disadvantage first-generation students.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+                                        <i data-lucide="lock" class="w-5 h-5 text-blue-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold mb-2">Privacy & Data Protection</h3>
+                                    <p class="text-slate-600 text-sm mb-3">AI often requires large datasets, raising questions about student data privacy, consent, and FERPA compliance.</p>
+                                    <div class="bg-blue-50 rounded-lg p-3 text-xs text-blue-700">
+                                        <strong>Key Question:</strong> What student data is being used, where is it stored, and who has access?
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+                                        <i data-lucide="eye" class="w-5 h-5 text-amber-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold mb-2">Transparency</h3>
+                                    <p class="text-slate-600 text-sm mb-3">Students and faculty have a right to know when AI is being used in decisions that affect them.</p>
+                                    <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-700">
+                                        <strong>Best Practice:</strong> Clearly disclose AI use in admissions, advising, and grading systems.
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mb-3">
+                                        <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+                                    </div>
+                                    <h3 class="font-semibold mb-2">Human Oversight</h3>
+                                    <p class="text-slate-600 text-sm mb-3">AI should augment human decision-making, not replace it entirely. Maintain meaningful human review.</p>
+                                    <div class="bg-emerald-50 rounded-lg p-3 text-xs text-emerald-700">
+                                        <strong>Principle:</strong> AI recommendations should inform, not determine, important decisions.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Building an AI Governance Framework</h2>
+                            
+                            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-8">
+                                <div class="grid md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+                                    <div class="p-5 text-center">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <span class="text-blue-600 font-bold">1</span>
+                                        </div>
+                                        <h4 class="font-semibold text-sm mb-1">Policy</h4>
+                                        <p class="text-xs text-slate-500">Create clear AI use policies</p>
+                                    </div>
+                                    <div class="p-5 text-center">
+                                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <span class="text-emerald-600 font-bold">2</span>
+                                        </div>
+                                        <h4 class="font-semibold text-sm mb-1">Review</h4>
+                                        <p class="text-xs text-slate-500">Establish ethics review process</p>
+                                    </div>
+                                    <div class="p-5 text-center">
+                                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <span class="text-purple-600 font-bold">3</span>
+                                        </div>
+                                        <h4 class="font-semibold text-sm mb-1">Training</h4>
+                                        <p class="text-xs text-slate-500">Educate staff on responsible use</p>
+                                    </div>
+                                    <div class="p-5 text-center">
+                                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <span class="text-amber-600 font-bold">4</span>
+                                        </div>
+                                        <h4 class="font-semibold text-sm mb-1">Audit</h4>
+                                        <p class="text-xs text-slate-500">Regularly assess AI systems</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-800 text-white rounded-xl p-6">
+                                <h3 class="font-semibold mb-4">Questions to Ask Vendors</h3>
+                                <ul class="space-y-3 text-slate-300">
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                        <span>How is our data used to train or improve your models?</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                        <span>What steps have you taken to identify and mitigate bias?</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                        <span>Can you explain how the AI reaches its recommendations?</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                        <span>What happens if we want to delete our data or discontinue service?</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 6: Getting Started
+                // ----------------------------------------
+                {
+                    id: 6,
+                    title: "Getting Started",
+                    icon: "rocket",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">Getting Started with AI Tools</h1>
+                            <p class="text-slate-500 mb-8">Practical steps to begin your AI journey</p>
+                            
+                            <div class="bg-gradient-to-br from-indigo-500 to-blue-600 text-white rounded-xl p-6 mb-8">
+                                <h2 class="text-xl font-semibold mb-2">Ready to Start?</h2>
+                                <p class="text-indigo-100">Here's a structured approach to introducing AI into your work without overwhelming yourself or your team.</p>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Popular AI Tools for Administrators</h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                                <div class="bg-white rounded-xl border border-slate-200 p-5 module-card">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">GPT</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">ChatGPT</h4>
+                                            <p class="text-xs text-slate-500">OpenAI</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Versatile AI assistant for writing, analysis, brainstorming, and more.</p>
+                                    <span class="inline-block px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full">Free tier available</span>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5 module-card">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">C</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Claude</h4>
+                                            <p class="text-xs text-slate-500">Anthropic</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Known for nuanced responses and handling long documents effectively.</p>
+                                    <span class="inline-block px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">Free tier available</span>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5 module-card">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">CP</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Microsoft Copilot</h4>
+                                            <p class="text-xs text-slate-500">Microsoft</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Integrates with Office 365 for AI-powered productivity in familiar tools.</p>
+                                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Part of M365</span>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5 module-card">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">G</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Google Gemini</h4>
+                                            <p class="text-xs text-slate-500">Google</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Integrates with Google Workspace with strong research capabilities.</p>
+                                    <span class="inline-block px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Free tier available</span>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Your 30-Day AI Adoption Plan</h2>
+                            
+                            <div class="space-y-4 mb-8">
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 bg-blue-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                            <span class="text-blue-600 font-bold text-lg">1</span>
+                                            <span class="text-blue-600 text-xs">WEEK</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Explore & Experiment</h4>
+                                            <ul class="text-sm text-slate-600 space-y-1">
+                                                <li>• Create accounts on 2-3 AI platforms</li>
+                                                <li>• Try simple tasks: summarizing, drafting emails</li>
+                                                <li>• Note what works well and what doesn't</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 bg-emerald-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                            <span class="text-emerald-600 font-bold text-lg">2</span>
+                                            <span class="text-emerald-600 text-xs">WEEK</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Integrate into Workflow</h4>
+                                            <ul class="text-sm text-slate-600 space-y-1">
+                                                <li>• Identify 3 recurring tasks for AI assistance</li>
+                                                <li>• Create templates and saved prompts</li>
+                                                <li>• Track time saved vs. time invested</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 bg-purple-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                            <span class="text-purple-600 font-bold text-lg">3</span>
+                                            <span class="text-purple-600 text-xs">WEEK</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Refine & Expand</h4>
+                                            <ul class="text-sm text-slate-600 space-y-1">
+                                                <li>• Improve your prompting techniques</li>
+                                                <li>• Try more complex use cases</li>
+                                                <li>• Share learnings with colleagues</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 bg-amber-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                            <span class="text-amber-600 font-bold text-lg">4</span>
+                                            <span class="text-amber-600 text-xs">WEEK</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Evaluate & Plan</h4>
+                                            <ul class="text-sm text-slate-600 space-y-1">
+                                                <li>• Assess ROI and effectiveness</li>
+                                                <li>• Identify opportunities for team adoption</li>
+                                                <li>• Develop recommendations for leadership</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-100 rounded-xl p-6">
+                                <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600"></i>
+                                    Pro Tips for Success
+                                </h3>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                                        <span>Always verify AI-generated facts and figures</span>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                                        <span>Don't share sensitive student data with public AI tools</span>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                                        <span>Review and edit AI outputs—add your voice</span>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                                        <span>Keep a log of useful prompts for future reference</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                
+                // ----------------------------------------
+                // MODULE 7: Future of AI
+                // ----------------------------------------
+                {
+                    id: 7,
+                    title: "Course Summary",
+                    icon: "flag",
+                    content: `
+                        <div class="fade-in">
+                            <h1 class="text-3xl font-bold text-slate-800 mb-2">Course Summary & Next Steps</h1>
+                            <p class="text-slate-500 mb-8">Bringing it all together and looking ahead</p>
+                            
+                            <div class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white rounded-xl p-8 mb-8 text-center">
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i data-lucide="award" class="w-8 h-8"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold mb-2">Congratulations!</h2>
+                                <p class="text-blue-100">You've completed the University Admin AI Training: Claude Opus 4.5 course. Here's what you've learned:</p>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Key Takeaways</h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i data-lucide="cpu" class="w-5 h-5 text-blue-600"></i>
+                                        <h4 class="font-semibold">AI Fundamentals</h4>
+                                    </div>
+                                    <p class="text-slate-600 text-sm">You now understand core AI concepts, from machine learning to generative AI, in accessible terms.</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i data-lucide="graduation-cap" class="w-5 h-5 text-emerald-600"></i>
+                                        <h4 class="font-semibold">Higher Ed Context</h4>
+                                    </div>
+                                    <p class="text-slate-600 text-sm">You've explored how AI is being applied across admissions, student success, operations, and more.</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i data-lucide="shield" class="w-5 h-5 text-purple-600"></i>
+                                        <h4 class="font-semibold">Ethical Awareness</h4>
+                                    </div>
+                                    <p class="text-slate-600 text-sm">You can identify bias, privacy, and governance considerations when evaluating AI tools.</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-slate-200 p-5">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i data-lucide="rocket" class="w-5 h-5 text-amber-600"></i>
+                                        <h4 class="font-semibold">Practical Skills</h4>
+                                    </div>
+                                    <p class="text-slate-600 text-sm">You have concrete strategies for using AI tools in your daily administrative work.</p>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Looking Ahead: The Future of AI in Higher Ed</h2>
+                            
+                            <div class="bg-slate-50 rounded-xl p-6 mb-8">
+                                <div class="space-y-4">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="trending-up" class="w-5 h-5 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Hyper-Personalization</h4>
+                                            <p class="text-slate-600 text-sm">AI will enable truly individualized student experiences, from customized learning paths to personalized support.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="bot" class="w-5 h-5 text-emerald-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">AI Agents</h4>
+                                            <p class="text-slate-600 text-sm">Autonomous AI systems that can complete complex multi-step tasks, transforming administrative workflows.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="book-marked" class="w-5 h-5 text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Curriculum Transformation</h4>
+                                            <p class="text-slate-600 text-sm">AI literacy will become essential across disciplines, changing what and how we teach.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-semibold text-slate-800 mb-4">Your Next Steps</h2>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                                        <p class="text-slate-700">Start using AI this week with one simple task from Module 4</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                                        <p class="text-slate-700">Share this course with a colleague who would benefit</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                                        <p class="text-slate-700">Join your institution's AI working group or start conversations about AI governance</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
+                                        <p class="text-slate-700">Download your certificate of completion</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-800 text-white rounded-xl p-6 text-center">
+                                <i data-lucide="message-circle" class="w-8 h-8 mx-auto mb-3 text-blue-400"></i>
+                                <h3 class="font-semibold text-lg mb-2">Thank You!</h3>
+                                <p class="text-slate-300 mb-4">We hope this course has given you the confidence to engage with AI as a powerful tool for improving higher education administration.</p>
+                                <button onclick="printCertificate()" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
+                                    <i data-lucide="award" class="w-5 h-5"></i>
+                                    Get Your Certificate
+                                </button>
+                            </div>
+                        </div>
+                    `
+                }
+            ]
+        };
+        
+        // ============================================
+        // APPLICATION STATE
+        // Tracks current module, progress, and bookmarks
+        // ============================================
+        
+        let state = {
+            currentModule: 0,
+            completedModules: new Set(),
+            bookmarkedModules: new Set()
+        };
+        
+        // ============================================
+        // INITIALIZATION
+        // Run when the page loads
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderNavigation();
+            loadModule(state.currentModule);
+            updateProgress();
+            lucide.createIcons();
+        });
+        
+        // ============================================
+        // STATE MANAGEMENT FUNCTIONS
+        // Handle saving/loading progress to localStorage
+        // ============================================
+        
+        /**
+         * Load saved state from localStorage
+         */
+        function loadState() {
+            const saved = localStorage.getItem('aiCourseState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.currentModule = parsed.currentModule || 0;
+                state.completedModules = new Set(parsed.completedModules || []);
+                state.bookmarkedModules = new Set(parsed.bookmarkedModules || []);
+            }
+        }
+        
+        /**
+         * Save current state to localStorage
+         */
+        function saveState() {
+            localStorage.setItem('aiCourseState', JSON.stringify({
+                currentModule: state.currentModule,
+                completedModules: Array.from(state.completedModules),
+                bookmarkedModules: Array.from(state.bookmarkedModules)
+            }));
+        }
+        
+        /**
+         * Reset all progress
+         */
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                state.currentModule = 0;
+                state.completedModules.clear();
+                state.bookmarkedModules.clear();
+                saveState();
+                renderNavigation();
+                loadModule(0);
+                updateProgress();
+            }
+        }
+        
+        // ============================================
+        // NAVIGATION FUNCTIONS
+        // Handle module navigation and menu rendering
+        // ============================================
+        
+        /**
+         * Render the sidebar navigation menu
+         */
+        function renderNavigation() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.innerHTML = courseData.modules.map(module => `
+                <li>
+                    <button 
+                        onclick="loadModule(${module.id})"
+                        class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors hover:bg-slate-100 ${state.currentModule === module.id ? 'active' : ''}"
+                        data-module-id="${module.id}"
+                    >
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                            state.completedModules.has(module.id) 
+                                ? 'bg-emerald-100' 
+                                : 'bg-slate-100'
+                        }">
+                            ${state.completedModules.has(module.id) 
+                                ? '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>'
+                                : `<i data-lucide="${module.icon}" class="w-4 h-4 text-slate-500"></i>`
+                            }
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-700 truncate">${module.title}</p>
+                            <p class="text-xs text-slate-400">Module ${module.id}</p>
+                        </div>
+                        ${state.bookmarkedModules.has(module.id) 
+                            ? '<i data-lucide="bookmark" class="w-4 h-4 text-blue-500 fill-blue-500 flex-shrink-0"></i>' 
+                            : ''
+                        }
+                    </button>
+                </li>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+        
+        /**
+         * Load a specific module
+         * @param {number} moduleId - The module ID to load
+         */
+        function loadModule(moduleId) {
+            const module = courseData.modules.find(m => m.id === moduleId);
+            if (!module) return;
+            
+            state.currentModule = moduleId;
+            saveState();
+            
+            // Update content
+            document.getElementById('module-content').innerHTML = module.content;
+            document.getElementById('current-module-title').textContent = module.title;
+            
+            // Update navigation highlighting
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.dataset.moduleId) === moduleId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+            updateCompleteButton();
+            updateBookmarkButton();
+            
+            // Scroll to top of content
+            document.getElementById('content-container').scrollTop = 0;
+            
+            // Close mobile sidebar
+            closeSidebar();
+            
+            // Re-initialize Lucide icons for new content
+            lucide.createIcons();
+        }
+        
+        /**
+         * Navigate to previous or next module
+         * @param {number} direction - -1 for previous, 1 for next
+         */
+        function navigateModule(direction) {
+            const newModuleId = state.currentModule + direction;
+            if (newModuleId >= 0 && newModuleId < courseData.modules.length) {
+                loadModule(newModuleId);
+            }
+        }
+        
+        /**
+         * Update the previous/next navigation buttons
+         */
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = state.currentModule === 0;
+            nextBtn.disabled = state.currentModule === courseData.modules.length - 1;
+        }
+        
+        // ============================================
+        // PROGRESS TRACKING FUNCTIONS
+        // Handle module completion and progress display
+        // ============================================
+        
+        /**
+         * Toggle the current module's completion status
+         */
+        function toggleModuleComplete() {
+            if (state.completedModules.has(state.currentModule)) {
+                state.completedModules.delete(state.currentModule);
+            } else {
+                state.completedModules.add(state.currentModule);
+            }
+            
+            saveState();
+            renderNavigation();
+            updateProgress();
+            updateCompleteButton();
+        }
+        
+        /**
+         * Update the complete button text and style
+         */
+        function updateCompleteButton() {
+            const btn = document.getElementById('complete-btn');
+            const btnText = document.getElementById('complete-btn-text');
+            const isComplete = state.completedModules.has(state.currentModule);
+            
+            if (isComplete) {
+                btn.className = 'flex items-center gap-2 px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-medium transition-colors';
+                btnText.textContent = 'Completed';
+            } else {
+                btn.className = 'flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors';
+                btnText.textContent = 'Mark Complete';
+            }
+        }
+        
+        /**
+         * Update the progress bar and text
+         */
+        function updateProgress() {
+            const total = courseData.modules.length;
+            const completed = state.completedModules.size;
+            const percent = Math.round((completed / total) * 100);
+            
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-text').textContent = `${completed} of ${total} modules completed`;
+        }
+        
+        // ============================================
+        // BOOKMARK FUNCTIONS
+        // Handle bookmarking modules
+        // ============================================
+        
+        /**
+         * Toggle bookmark for current module
+         */
+        function toggleBookmark() {
+            if (state.bookmarkedModules.has(state.currentModule)) {
+                state.bookmarkedModules.delete(state.currentModule);
+            } else {
+                state.bookmarkedModules.add(state.currentModule);
+            }
+            
+            saveState();
+            renderNavigation();
+            updateBookmarkButton();
+        }
+        
+        /**
+         * Update bookmark button appearance
+         */
+        function updateBookmarkButton() {
+            const btn = document.getElementById('bookmark-btn');
+            const isBookmarked = state.bookmarkedModules.has(state.currentModule);
+            
+            btn.innerHTML = isBookmarked 
+                ? '<i data-lucide="bookmark" class="w-5 h-5 text-blue-500 fill-blue-500"></i>'
+                : '<i data-lucide="bookmark" class="w-5 h-5 text-slate-500"></i>';
+            
+            lucide.createIcons();
+        }
+        
+        // ============================================
+        // SIDEBAR FUNCTIONS
+        // Handle mobile sidebar toggle
+        // ============================================
+        
+        /**
+         * Toggle mobile sidebar visibility
+         */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+        
+        /**
+         * Close mobile sidebar
+         */
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+        
+        // ============================================
+        // CERTIFICATE FUNCTIONS
+        // Handle certificate modal display
+        // ============================================
+        
+        /**
+         * Show the certificate modal
+         */
+        function printCertificate() {
+            const modal = document.getElementById('certificate-modal');
+            const status = document.getElementById('completion-status');
+            const date = document.getElementById('certificate-date');
+            
+            const completed = state.completedModules.size;
+            const total = courseData.modules.length;
+            
+            status.textContent = `Completed ${completed} of ${total} modules (${Math.round((completed/total)*100)}%)`;
+            date.textContent = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            lucide.createIcons();
+        }
+        
+        /**
+         * Close the certificate modal
+         */
+        function closeCertificateModal() {
+            const modal = document.getElementById('certificate-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCertificateModal();
+            }
+        });
+    </script>
+</body>
+</html>

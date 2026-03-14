@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pwsh -Command \"Get-ChildItem -Path 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages' -Recurse -File | Select-Object -First 50 FullName\")",
+      "Bash(pwsh -Command \"Get-ChildItem -Filter '*.html' | Select-Object Name\")",
+      "Bash(pwsh -Command \"\\(Get-Content 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages\\\\AI for Univ  Admins Gemini 3 pro  via LMA.html'\\) -match 'AI for University Administrators'\")",
+      "Bash(pwsh -Command \"Select-String -Path 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages\\\\AI for Univ  Admins Gemini 3 pro  via LMA.html' -Pattern 'AI for University Administrators'\")",
+      "Bash(pwsh -Command \"\\(Get-Content 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages\\\\AI for Univ  Admins Gemini 3 pro  via LMA.html' -Raw\\) -split 'AI for University Administrators' | Measure-Object | Select-Object -ExpandProperty Count\")",
+      "Bash(pwsh -Command \"\\(Get-Content 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages\\\\AI for Univ  Admins Gemini 3 pro  via LMA.html' -Raw\\) -split 'USU Guide' | Measure-Object | Select-Object -ExpandProperty Count\")",
+      "Bash(pwsh)",
+      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git init\")",
+      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git add .\")"
+    ]
+  }
+}

@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ============================================
+         AI COURSE FOR UNIVERSITY ADMINISTRATORS
+         A polished, single-page web application
+         
+         TABLE OF CONTENTS:
+         1. Styles & Theme Configuration
+         2. HTML Structure
+            - Header/Navigation
+            - Sidebar (Course Outline)
+            - Main Content Area
+            - Interactive Components
+         3. JavaScript Functionality
+            - Navigation System
+            - Progress Tracking
+            - Quiz System
+            - Expandable Sections
+         ============================================ -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Admin AI Training: GLM-4.7</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================
+           CUSTOM STYLES & OVERRIDES
+           Edit these sections to customize appearance
+           ========================================== */
+        
+        :root {
+            /* Primary Color Palette - University Blue Theme */
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            
+            /* Accent Colors */
+            --accent: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            
+            /* Neutral Colors */
+            --bg-dark: #0f172a;
+            --bg-card: #ffffff;
+            --bg-lesson: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        
+        /* Base Typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Merriweather', serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        .lesson-content {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Progress Bar Animation */
+        .progress-fill {
+            transition: width 0.5s ease-out;
+        }
+        
+        /* Interactive Elements */
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover:not(.disabled) {
+            border-color: var(--primary-light);
+            background-color: #eff6ff;
+        }
+        
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background-color: #dbeafe;
+        }
+        
+        .quiz-option.correct {
+            border-color: var(--success);
+            background-color: #d1fae5;
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+        
+        /* Accordion Styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .accordion-content.open {
+            max-height: 2000px;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Icon Container */
+        .icon-box {
+            @apply flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .sidebar, .mobile-nav { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800">
+    
+    <!-- ==========================================
+         HEADER SECTION
+         Contains course title, progress bar, and mobile menu toggle
+         ========================================== -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between px-4 lg:px-6 py-3">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <!-- Mobile Menu Toggle -->
+                <button id="menuToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Toggle menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                
+                <!-- Course Logo -->
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                
+                <div class="hidden sm:block">
+                    <h1 class="text-lg font-bold text-slate-800">University Admin AI Training: GLM-4.7</h1>
+                    <p class="text-xs text-slate-500">Powered by GLM-4.7</p>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right">
+                    <p class="text-sm font-medium text-slate-700">Course Progress</p>
+                    <p class="text-xs text-slate-500"><span id="completedLessons">0</span> of <span id="totalLessons">6</span> lessons</p>
+                </div>
+                <div class="w-32 sm:w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressBar" class="progress-fill h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full" style="width: 0%"></div>
+                </div>
+                <div id="progressPercent" class="text-sm font-bold text-blue-600 w-12 text-right">0%</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         SIDEBAR NAVIGATION
+         Course outline with lesson navigation
+         ========================================== -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-16 bottom-0 w-72 bg-white border-r border-gray-200 overflow-y-auto">
+        <div class="p-4">
+            <!-- Course Info Card -->
+            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 text-white mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="p-2 bg-white/20 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Course Certificate</h3>
+                        <p class="text-sm text-blue-100 mt-1">Complete all lessons to earn your certificate</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Course Outline</p>
+                <ul id="navList" class="space-y-1">
+                    <!-- Navigation items will be generated by JavaScript -->
+                </ul>
+            </nav>
+            
+            <!-- Course Stats -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Course Info</p>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-600">Duration</span>
+                        <span class="font-medium text-slate-800">~2 hours</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-600">Lessons</span>
+                        <span class="font-medium text-slate-800">6 modules</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-600">Level</span>
+                        <span class="font-medium text-green-600">Beginner</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+    <!-- ==========================================
+         MAIN CONTENT AREA
+         Dynamic lesson content renders here
+         ========================================== -->
+    <main class="lg:ml-72 pt-16 min-h-screen">
+        <div id="contentArea" class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Lesson content will be dynamically loaded here -->
+        </div>
+        
+        <!-- Navigation Footer -->
+        <nav class="fixed bottom-0 left-0 lg:left-72 right-0 bg-white border-t border-gray-200 px-4 py-3 z-30">
+            <div class="max-w-4xl mx-auto flex items-center justify-between">
+                <button id="prevBtn" onclick="navigateLesson(-1)" class="flex items-center gap-2 px-4 py-2 rounded-lg text-slate-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span class="hidden sm:inline">Previous</span>
+                </button>
+                
+                <button id="nextBtn" onclick="navigateLesson(1)" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    <span>Next Lesson</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Spacing for fixed footer -->
+        <div class="h-20"></div>
+    </main>
+
+    <!-- ==========================================
+         JAVASCRIPT SECTION
+         Handles all interactivity and state management
+         ========================================== -->
+    <script>
+        /* ==========================================
+           COURSE DATA
+           Edit this array to modify course content
+           Each lesson object contains:
+           - id: Unique identifier
+           - title: Display title
+           - icon: SVG icon path
+           - content: HTML content for the lesson
+           - quiz: Optional quiz question
+           ========================================== */
+        
+        const courseData = [
+            {
+                id: 1,
+                title: "Introduction to AI",
+                icon: "M13 10V3L4 14h7v7l9-11h-7z",
+                duration: "15 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 1</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">Introduction to AI</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                                Welcome to this comprehensive guide on Artificial Intelligence designed specifically for university administrators. This course will demystify AI and help you understand its potential impact on higher education.
+                            </p>
+                            
+                            <!-- Learning Objectives -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+                                <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    Learning Objectives
+                                </h3>
+                                <ul class="space-y-2 text-blue-700">
+                                    <li>✓ Understand what AI is and isn't</li>
+                                    <li>✓ Learn about different types of AI</li>
+                                    <li>✓ Recognize AI's relevance to higher education</li>
+                                    <li>✓ Identify key AI terminology</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Main Content Sections -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm">
+                                <h3 class="text-xl font-bold text-slate-800 mb-4">What is Artificial Intelligence?</h3>
+                                <p class="text-slate-600 mb-4">
+                                    Artificial Intelligence (AI) refers to computer systems designed to perform tasks that typically require human intelligence. These include learning, reasoning, problem-solving, perception, and language understanding.
+                                </p>
+                                <p class="text-slate-600">
+                                    Contrary to science fiction portrayals, today's AI is specialized—designed for specific tasks rather than exhibiting general intelligence like humans.
+                                </p>
+                            </div>
+                            
+                            <!-- Key Types of AI -->
+                            <h3 class="text-xl font-bold text-slate-800 mb-4">Types of AI You Should Know</h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm card-hover">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-800 mb-2">Machine Learning</h4>
+                                    <p class="text-sm text-slate-600">Systems that improve through experience, learning patterns from data without explicit programming.</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm card-hover">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-800 mb-2">Natural Language Processing</h4>
+                                    <p class="text-sm text-slate-600">AI that understands, interprets, and generates human language (e.g., chatbots, translation).</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm card-hover">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-800 mb-2">Computer Vision</h4>
+                                    <p class="text-sm text-slate-600">AI that can interpret and understand visual information from images and videos.</p>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm card-hover">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-3">
+                                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-800 mb-2">Predictive Analytics</h4>
+                                    <p class="text-sm text-slate-600">Using historical data to predict future outcomes and trends.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Key Terminology Accordion -->
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+                                <h3 class="text-xl font-bold text-slate-800 p-6 pb-4">Key Terminology</h3>
+                                
+                                <div class="border-t border-gray-200">
+                                    <button class="accordion-btn w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                                        <span class="font-medium text-slate-700">LLM (Large Language Model)</span>
+                                        <svg class="w-5 h-5 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <p class="px-4 pb-4 text-slate-600">A type of AI trained on vast amounts of text data that can understand and generate human-like text. Examples include GPT-4, Claude, and Google's Gemini.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t border-gray-200">
+                                    <button class="accordion-btn w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                                        <span class="font-medium text-slate-700">Generative AI</span>
+                                        <svg class="w-5 h-5 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <p class="px-4 pb-4 text-slate-600">AI systems that can create new content—including text, images, audio, and code—rather than simply analyzing or classifying existing data.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t border-gray-200">
+                                    <button class="accordion-btn w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                                        <span class="font-medium text-slate-700">Algorithm</span>
+                                        <svg class="w-5 h-5 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <p class="px-4 pb-4 text-slate-600">A set of rules or instructions given to a computer to help it solve a problem or make decisions. In AI, algorithms enable machines to learn from data.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t border-gray-200">
+                                    <button class="accordion-btn w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                                        <span class="font-medium text-slate-700">Training Data</span>
+                                        <svg class="w-5 h-5 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <p class="px-4 pb-4 text-slate-600">The collection of data used to train an AI model. The quality and diversity of training data significantly impacts the AI's performance and potential biases.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "What type of AI is best described as 'systems designed to perform tasks that typically require human intelligence'?",
+                    options: ["Robotics", "Artificial Intelligence", "Quantum Computing", "Blockchain"],
+                    correct: 1,
+                    explanation: "Artificial Intelligence (AI) encompasses computer systems designed to perform tasks that typically require human intelligence such as learning, reasoning, and problem-solving."
+                }
+            },
+            {
+                id: 2,
+                title: "AI in Higher Education",
+                icon: "M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z",
+                duration: "20 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 2</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">AI in Higher Education</h2>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            Artificial Intelligence is rapidly transforming higher education. Understanding these changes will help you make informed decisions about AI adoption at your institution.
+                        </p>
+                        
+                        <!-- Current Applications -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">Current AI Applications in Universities</h3>
+                            
+                            <div class="grid gap-4">
+                                <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Student Enrollment & Recruitment</h4>
+                                        <p class="text-slate-600 text-sm mt-1">AI-powered chatbots answer prospective student queries 24/7. Predictive models identify likely applicants and optimize recruitment efforts.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Academic Advising</h4>
+                                        <p class="text-slate-600 text-sm mt-1">AI systems analyze student data to suggest course schedules, identify at-risk students, and provide personalized recommendations.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Grading & Assessment</h4>
+                                        <p class="text-slate-600 text-sm mt-1">Automated grading for multiple-choice and even written assignments. AI can provide instant feedback to students on drafts.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Administrative Operations</h4>
+                                        <p class="text-slate-600 text-sm mt-1">AI streamlines scheduling, resource allocation, financial aid processing, and facilities management.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Student Success & Retention</h4>
+                                        <p class="text-slate-600 text-sm mt-1">Predictive analytics identify students who may need support, enabling proactive intervention to improve retention rates.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Benefits & Challenges -->
+                        <div class="grid md:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-green-800 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Potential Benefits
+                                </h3>
+                                <ul class="space-y-2 text-green-700 text-sm">
+                                    <li>• 24/7 student support through AI assistants</li>
+                                    <li>• Personalized learning experiences</li>
+                                    <li>• Improved operational efficiency</li>
+                                    <li>• Data-driven decision making</li>
+                                    <li>• Cost reduction in repetitive tasks</li>
+                                    <li>• Early identification of at-risk students</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    Challenges to Consider
+                                </h3>
+                                <ul class="space-y-2 text-amber-700 text-sm">
+                                    <li>• Data privacy and security concerns</li>
+                                    <li>• Potential for algorithmic bias</li>
+                                    <li>• Faculty and staff training needs</li>
+                                    <li>• Implementation costs</li>
+                                    <li>• Maintaining human connection</li>
+                                    <li>• Ethical use guidelines</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Statistics -->
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 text-white mb-8">
+                            <h3 class="text-xl font-bold mb-6">AI in Higher Education: By the Numbers</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-blue-400">85%</div>
+                                    <p class="text-sm text-slate-400 mt-1">of institutions use some form of AI</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-green-400">40%</div>
+                                    <p class="text-sm text-slate-400 mt-1">reduction in admin time reported</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-purple-400">3x</div>
+                                    <p class="text-sm text-slate-400 mt-1">ROI on AI investments avg.</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-orange-400">70%</div>
+                                    <p class="text-sm text-slate-400 mt-1">of students expect AI support</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-6 text-center">*Illustrative statistics for educational purposes</p>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "Which of the following is NOT a common current application of AI in higher education?",
+                    options: [
+                        "24/7 student support chatbots",
+                        "Predictive student retention modeling",
+                        "Fully autonomous teaching without human instructors",
+                        "Automated scheduling and resource allocation"
+                    ],
+                    correct: 2,
+                    explanation: "While AI can assist teaching, fully autonomous teaching without human instructors is not currently a common or recommended application. AI works best as a tool to augment, not replace, human educators."
+                }
+            },
+            {
+                id: 3,
+                title: "Administrative Applications",
+                icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
+                duration: "25 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 3</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">Administrative Applications</h2>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            This module explores specific AI applications that can streamline university operations, reduce administrative burden, and improve efficiency across departments.
+                        </p>
+                        
+                        <!-- Department Focus Sections -->
+                        <div class="space-y-6">
+                            <!-- Admissions Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 text-white">
+                                    <h3 class="text-xl font-bold flex items-center gap-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                                        </svg>
+                                        Admissions Office
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800 mb-3">AI Applications</h4>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-blue-500 mt-0.5">▸</span>
+                                                    <span><strong>Application Screening:</strong> Initial review based on predefined criteria</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-blue-500 mt-0.5">▸</span>
+                                                    <span><strong>Chatbot Support:</strong> Answer FAQs from applicants 24/7</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-blue-500 mt-0.5">▸</span>
+                                                    <span><strong>Yield Prediction:</strong> Identify likely enrolled students</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-blue-500 mt-0.5">▸</span>
+                                                    <span><strong>Personalized Outreach:</strong> Tailored communication based on interests</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="bg-blue-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-blue-800 mb-3">💡 Implementation Tip</h4>
+                                            <p class="text-sm text-blue-700">Start with chatbot FAQs to reduce routine inquiries. This frees staff to focus on complex applicant cases and relationship building.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Financial Aid Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-700 p-5 text-white">
+                                    <h3 class="text-xl font-bold flex items-center gap-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Financial Aid Office
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800 mb-3">AI Applications</h4>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-green-500 mt-0.5">▸</span>
+                                                    <span><strong>Document Verification:</strong> Automated FAFSA and tax document processing</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-green-500 mt-0.5">▸</span>
+                                                    <span><strong>Award Optimization:</strong> Maximize aid distribution impact</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-green-500 mt-0.5">▸</span>
+                                                    <span><strong>SAP Prediction:</strong> Identify students at risk of losing aid eligibility</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-green-500 mt-0.5">▸</span>
+                                                    <span><strong>Verification Selection:</strong> Data-driven selection for federal verification</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="bg-green-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-green-800 mb-3">💡 Implementation Tip</h4>
+                                            <p class="text-sm text-green-700">AI can significantly reduce processing time for aid applications, allowing faster award notifications—a competitive advantage in enrollment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Student Services Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="bg-gradient-to-r from-purple-600 to-purple-700 p-5 text-white">
+                                    <h3 class="text-xl font-bold flex items-center gap-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        Student Services
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800 mb-3">AI Applications</h4>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-purple-500 mt-0.5">▸</span>
+                                                    <span><strong>Virtual Advisors:</strong> Course recommendations and degree planning</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-purple-500 mt-0.5">▸</span>
+                                                    <span><strong>Mental Health Screening:</strong> Early warning systems for student wellbeing</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-purple-500 mt-0.5">▸</span>
+                                                    <span><strong>Career Matching:</strong> AI-driven job and internship recommendations</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-purple-500 mt-0.5">▸</span>
+                                                    <span><strong>Housing Optimization:</strong> Efficient room and roommate assignments</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="bg-purple-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-purple-800 mb-3">💡 Implementation Tip</h4>
+                                            <p class="text-sm text-purple-700">AI should enhance, not replace, human advisors. Use it to handle routine questions, freeing advisors for complex counseling.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- IT & Operations Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="bg-gradient-to-r from-orange-600 to-orange-700 p-5 text-white">
+                                    <h3 class="text-xl font-bold flex items-center gap-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                                        </svg>
+                                        IT & Operations
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800 mb-3">AI Applications</h4>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-orange-500 mt-0.5">▸</span>
+                                                    <span><strong>IT Support:</strong> Automated help desk and issue resolution</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-orange-500 mt-0.5">▸</span>
+                                                    <span><strong>Predictive Maintenance:</strong> Campus equipment and facilities</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-orange-500 mt-0.5">▸</span>
+                                                    <span><strong>Energy Management:</strong> Optimize HVAC and lighting usage</span>
+                                                </li>
+                                                <li class="flex items-start gap-2">
+                                                    <span class="text-orange-500 mt-0.5">▸</span>
+                                                    <span><strong>Cybersecurity:</strong> Threat detection and response</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="bg-orange-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-orange-800 mb-3">💡 Implementation Tip</h4>
+                                            <p class="text-sm text-orange-700">IT is often the best starting point for AI implementation. Start with help desk automation to demonstrate quick wins.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ROI Calculator Placeholder -->
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 text-white mt-8">
+                            <h3 class="text-xl font-bold mb-4">Quick ROI Assessment</h3>
+                            <p class="text-slate-300 mb-4">Consider these factors when evaluating AI investments:</p>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div class="bg-slate-700/50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-blue-400 mb-2">Time Savings</h4>
+                                    <p class="text-slate-400">Hours saved per week × staff hourly rate × 52 weeks</p>
+                                </div>
+                                <div class="bg-slate-700/50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-green-400 mb-2">Revenue Impact</h4>
+                                    <p class="text-slate-400">Improved enrollment/retention × average student value</p>
+                                </div>
+                                <div class="bg-slate-700/50 rounded-lg p-4">
+                                    <h4 class="font-semibold text-purple-400 mb-2">Cost Avoidance</h4>
+                                    <p class="text-slate-400">Reduced errors, compliance penalties, manual processes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "Which AI application can provide the quickest 'win' for university IT departments looking to demonstrate value?",
+                    options: [
+                        "Full campus-wide predictive maintenance system",
+                        "Automated IT help desk for common issues",
+                        "AI-driven enrollment prediction models",
+                        "Complete energy management overhaul"
+                    ],
+                    correct: 1,
+                    explanation: "Automated IT help desks can be implemented relatively quickly and provide immediate, measurable value by reducing routine support tickets and freeing IT staff for more complex issues."
+                }
+            },
+            {
+                id: 4,
+                title: "Ethical Considerations",
+                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+                duration: "20 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 4</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">Ethical Considerations</h2>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            As university leaders, we must ensure AI implementation aligns with our institutions' values and serves all students ethically and equitably.
+                        </p>
+                        
+                        <!-- Key Ethical Framework -->
+                        <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-xl p-6 mb-8">
+                            <h3 class="text-lg font-bold text-amber-800 mb-3">🎓 The Administrator's Ethical Framework</h3>
+                            <p class="text-amber-700">Before implementing any AI system, ask: <strong>"Would I be comfortable if this decision or process were on the front page of the New York Times?"</strong></p>
+                        </div>
+                        
+                        <!-- Main Ethical Issues -->
+                        <div class="space-y-6">
+                            <!-- Bias & Fairness -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-slate-800 mb-3">Algorithmic Bias & Fairness</h3>
+                                        <p class="text-slate-600 mb-4">AI systems can perpetuate or amplify existing biases present in their training data, potentially disadvantaging certain student populations.</p>
+                                        
+                                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                            <h4 class="font-semibold text-slate-700 mb-2">Examples of Potential Bias:</h4>
+                                            <ul class="space-y-1 text-sm text-slate-600">
+                                                <li>• Admissions AI favoring students from certain geographic areas</li>
+                                                <li>• Chatbots providing less helpful responses to non-native English speakers</li>
+                                                <li>• Predictive models flagging minority students as "at-risk" more frequently</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="bg-green-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-green-800 mb-2">✓ Mitigation Strategies:</h4>
+                                            <ul class="space-y-1 text-sm text-green-700">
+                                                <li>• Regularly audit AI systems for biased outcomes</li>
+                                                <li>• Use diverse training data sets</li>
+                                                <li>• Include diverse stakeholders in development and testing</li>
+                                                <li>• Maintain human review for high-stakes decisions</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Privacy & Data Security -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-slate-800 mb-3">Privacy & Data Security</h3>
+                                        <p class="text-slate-600 mb-4">AI systems require vast amounts of data, raising significant privacy concerns under FERPA and other regulations.</p>
+                                        
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div class="bg-red-50 rounded-lg p-4">
+                                                <h4 class="font-semibold text-red-800 mb-2">⚠️ Risks:</h4>
+                                                <ul class="space-y-1 text-sm text-red-700">
+                                                    <li>• Unauthorized data access</li>
+                                                    <li>• Data breaches and leaks</li>
+                                                    <li>• Third-party data sharing</li>
+                                                    <li>• Surveillance concerns</li>
+                                                </ul>
+                                            </div>
+                                            <div class="bg-green-50 rounded-lg p-4">
+                                                <h4 class="font-semibold text-green-800 mb-2">✓ Best Practices:</h4>
+                                                <ul class="space-y-1 text-sm text-green-700">
+                                                    <li>• Data minimization principles</li>
+                                                    <li>• Clear data retention policies</li>
+                                                    <li>• Vendor due diligence</li>
+                                                    <li>• Transparent privacy notices</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Transparency & Explainability -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-slate-800 mb-3">Transparency & Explainability</h3>
+                                        <p class="text-slate-600 mb-4">Stakeholders deserve to understand how AI decisions affecting them are made. This builds trust and enables accountability.</p>
+                                        
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            <h4 class="font-semibold text-slate-700 mb-3">Transparency Checklist:</h4>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-3 text-sm text-slate-600">
+                                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded">
+                                                    <span>Clearly disclose when students are interacting with AI</span>
+                                                </label>
+                                                <label class="flex items-center gap-3 text-sm text-slate-600">
+                                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded">
+                                                    <span>Document AI system capabilities and limitations</span>
+                                                </label>
+                                                <label class="flex items-center gap-3 text-sm text-slate-600">
+                                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded">
+                                                    <span>Provide explanation pathways for significant decisions</span>
+                                                </label>
+                                                <label class="flex items-center gap-3 text-sm text-slate-600">
+                                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded">
+                                                    <span>Establish appeal processes for AI-influenced decisions</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Academic Integrity -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-slate-800 mb-3">Academic Integrity</h3>
+                                        <p class="text-slate-600 mb-4">Generative AI presents both challenges and opportunities for academic integrity that administrators must navigate thoughtfully.</p>
+                                        
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div class="border border-gray-200 rounded-lg p-4">
+                                                <h4 class="font-semibold text-slate-700 mb-2">Challenges:</h4>
+                                                <ul class="space-y-1 text-sm text-slate-600">
+                                                    <li>• AI-generated assignments</li>
+                                                    <li>• Plagiarism detection complexities</li>
+                                                    <li>• Defining acceptable AI use</li>
+                                                    <li>• Evolving assessment methods</li>
+                                                </ul>
+                                            </div>
+                                            <div class="border border-gray-200 rounded-lg p-4">
+                                                <h4 class="font-semibold text-slate-700 mb-2">Leadership Actions:</h4>
+                                                <ul class="space-y-1 text-sm text-slate-600">
+                                                    <li>• Develop clear AI use policies</li>
+                                                    <li>• Support faculty in AI literacy</li>
+                                                    <li>• Encourage AI-integrated pedagogy</li>
+                                                    <li>• Focus on authentic assessment</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Decision Framework -->
+                        <div class="mt-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 text-white">
+                            <h3 class="text-xl font-bold mb-4">AI Implementation Decision Framework</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                                    <div>
+                                        <h4 class="font-semibold">Assess Impact</h4>
+                                        <p class="text-sm text-slate-400">Does this AI affect students' opportunities, grades, or privacy?</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                                    <div>
+                                        <h4 class="font-semibold">Test for Bias</h4>
+                                        <p class="text-sm text-slate-400">Has the system been tested across diverse student populations?</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                                    <div>
+                                        <h4 class="font-semibold">Ensure Human Oversight</h4>
+                                        <p class="text-sm text-slate-400">Is there appropriate human review for important decisions?</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold">4</div>
+                                    <div>
+                                        <h4 class="font-semibold">Document and Communicate</h4>
+                                        <p class="text-sm text-slate-400">Are stakeholders informed about AI use and its implications?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "What is the most important first step before implementing an AI system that affects student admissions decisions?",
+                    options: [
+                        "Calculate potential cost savings",
+                        "Audit the system for bias across diverse applicant pools",
+                        "Announce the innovation to the press",
+                        "Purchase the most expensive available solution"
+                    ],
+                    correct: 1,
+                    explanation: "Before any AI implementation that affects high-stakes decisions like admissions, auditing for bias across diverse populations is essential to ensure equitable outcomes and comply with non-discrimination laws."
+                }
+            },
+            {
+                id: 5,
+                title: "Implementation Strategy",
+                icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+                duration: "25 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 5</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">Implementation Strategy</h2>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            Successful AI adoption requires thoughtful planning, stakeholder engagement, and a phased approach. This module provides a roadmap for implementation.
+                        </p>
+                        
+                        <!-- Phase-Based Approach -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">The Four-Phase Implementation Framework</h3>
+                            
+                            <div class="relative">
+                                <!-- Connection Line -->
+                                <div class="absolute left-6 top-12 bottom-12 w-0.5 bg-blue-200 hidden md:block"></div>
+                                
+                                <div class="space-y-6">
+                                    <!-- Phase 1 -->
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold z-10">1</div>
+                                        <div class="flex-1 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <h4 class="font-bold text-slate-800">Assessment & Planning</h4>
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">1-2 months</span>
+                                            </div>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li>✓ Identify specific problems AI can solve</li>
+                                                <li>✓ Assess data availability and quality</li>
+                                                <li>✓ Conduct stakeholder interviews</li>
+                                                <li>✓ Define success metrics and KPIs</li>
+                                                <li>✓ Establish budget and timeline</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Phase 2 -->
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold z-10">2</div>
+                                        <div class="flex-1 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <h4 class="font-bold text-slate-800">Pilot & Test</h4>
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">2-4 months</span>
+                                            </div>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li>✓ Select pilot department or use case</li>
+                                                <li>✓ Choose and configure AI solution</li>
+                                                <li>✓ Conduct small-scale testing</li>
+                                                <li>✓ Gather feedback from users</li>
+                                                <li>✓ Measure initial outcomes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Phase 3 -->
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold z-10">3</div>
+                                        <div class="flex-1 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <h4 class="font-bold text-slate-800">Scale & Integrate</h4>
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">3-6 months</span>
+                                            </div>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li>✓ Expand to additional departments</li>
+                                                <li>✓ Integrate with existing systems</li>
+                                                <li>✓ Train staff at scale</li>
+                                                <li>✓ Develop support documentation</li>
+                                                <li>✓ Establish governance processes</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Phase 4 -->
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold z-10">4</div>
+                                        <div class="flex-1 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <h4 class="font-bold text-slate-800">Optimize & Sustain</h4>
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Ongoing</span>
+                                            </div>
+                                            <ul class="space-y-2 text-sm text-slate-600">
+                                                <li>✓ Monitor performance metrics</li>
+                                                <li>✓ Gather continuous feedback</li>
+                                                <li>✓ Regular bias and accuracy audits</li>
+                                                <li>✓ Update and refine models</li>
+                                                <li>✓ Explore expansion opportunities</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stakeholder Management -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">Stakeholder Engagement</h3>
+                            
+                            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">Faculty</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: Academic freedom, workload, pedagogical impact</p>
+                                    <p class="text-xs text-slate-500">Engage early through faculty senate and departmental meetings</p>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">Students</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: Privacy, fairness, support quality</p>
+                                    <p class="text-xs text-slate-500">Include student government in planning and feedback loops</p>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">Staff</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: Job security, training, workflow changes</p>
+                                    <p class="text-xs text-slate-500">Emphasize AI as augmentation tool, provide thorough training</p>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">IT/Technical</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: Integration, security, support burden</p>
+                                    <p class="text-xs text-slate-500">Involve IT from initial assessment phase</p>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">Legal/Compliance</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: FERPA, liability, regulations</p>
+                                    <p class="text-xs text-slate-500">Consult early to identify potential issues</p>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h4 class="font-semibold text-slate-800">Board/Donors</h4>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mb-2">Key Concerns: ROI, institutional reputation</p>
+                                    <p class="text-xs text-slate-500">Align AI initiatives with strategic priorities</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Wins -->
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200 p-6 mb-8">
+                            <h3 class="text-lg font-bold text-green-800 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                                Quick Win Projects (Start Here!)
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2">IT Help Desk Bot</h4>
+                                    <p class="text-sm text-slate-600">Implement AI chatbot for common IT issues. Quick to deploy, immediate ROI.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Admissions FAQ Bot</h4>
+                                    <p class="text-sm text-slate-600">24/7 responses to applicant questions. Reduces staff workload significantly.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Meeting Summaries</h4>
+                                    <p class="text-sm text-slate-600">AI-generated meeting notes and action items. Improves documentation.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Document Analysis</h4>
+                                    <p class="text-sm text-slate-600">AI tools to search and summarize policy documents. Saves research time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Common Pitfalls -->
+                        <div class="bg-red-50 border-l-4 border-red-500 rounded-r-xl p-6">
+                            <h3 class="text-lg font-bold text-red-800 mb-3">⚠️ Common Implementation Pitfalls to Avoid</h3>
+                            <ul class="space-y-2 text-red-700 text-sm">
+                                <li>• Starting without clear problem definition or success metrics</li>
+                                <li>• Neglecting stakeholder communication and buy-in</li>
+                                <li>• Underestimating data preparation and integration needs</li>
+                                <li>• Insufficient training and change management</li>
+                                <li>• Ignoring ethical considerations and bias testing</li>
+                                <li>• Choosing tools based on hype rather than institutional needs</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "What is the recommended approach for starting AI implementation at a university?",
+                    options: [
+                        "Implement institution-wide AI systems immediately",
+                        "Start with small pilot projects and scale based on results",
+                        "Wait until all competitors have implemented AI",
+                        "Focus only on expensive, comprehensive solutions"
+                    ],
+                    correct: 1,
+                    explanation: "A phased approach starting with pilot projects allows for testing, learning, and refinement before broader implementation. This reduces risk and builds stakeholder confidence through demonstrated success."
+                }
+            },
+            {
+                id: 6,
+                title: "Future Outlook & Next Steps",
+                icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+                duration: "15 min",
+                content: `
+                    <div class="lesson-content">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="icon-box">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-sm text-blue-600 font-medium">Module 6</span>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-800">Future Outlook & Next Steps</h2>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                            Congratulations on completing the course! This final module explores emerging AI trends and provides actionable next steps for your AI journey.
+                        </p>
+                        
+                        <!-- Emerging Trends -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">Emerging AI Trends in Higher Education</h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-blue-600 font-bold">1</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">Hyper-Personalized Learning</h4>
+                                            <p class="text-sm text-slate-600">AI that adapts content, pacing, and support to individual student needs in real-time.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-blue-600 font-bold">2</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">AI Tutoring Assistants</h4>
+                                            <p class="text-sm text-slate-600">24/7 intelligent tutoring systems providing personalized academic support across subjects.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-blue-600 font-bold">3</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">Predictive Student Success</h4>
+                                            <p class="text-sm text-slate-600">Advanced models predicting and preventing student challenges before they impact success.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-purple-600 font-bold">4</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">Immersive AI Experiences</h4>
+                                            <p class="text-sm text-slate-600">VR/AR combined with AI for experiential learning and virtual campus experiences.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-purple-600 font-bold">5</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">AI-Powered Research</h4>
+                                            <p class="text-sm text-slate-600">Tools accelerating research discovery, literature review, and grant writing.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <span class="text-purple-600 font-bold">6</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800">Administrative Autonomy</h4>
+                                            <p class="text-sm text-slate-600">Increasing automation of routine administrative tasks and decision support.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Plan -->
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-6 text-white mb-8">
+                            <h3 class="text-xl font-bold mb-6">Your 90-Day AI Action Plan</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-white/10 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-bold">Days 1-30</span>
+                                        <h4 class="font-semibold">Foundation Building</h4>
+                                    </div>
+                                    <ul class="space-y-2 text-sm text-blue-100 ml-14">
+                                        <li>☐ Form AI working group with key stakeholders</li>
+                                        <li>☐ Conduct AI readiness assessment</li>
+                                        <li>☐ Identify 2-3 potential pilot projects</li>
+                                        <li>☐ Begin staff AI awareness training</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white/10 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-bold">Days 31-60</span>
+                                        <h4 class="font-semibold">Pilot Launch</h4>
+                                    </div>
+                                    <ul class="space-y-2 text-sm text-blue-100 ml-14">
+                                        <li>☐ Select and implement first pilot project</li>
+                                        <li>☐ Establish metrics and baseline measurements</li>
+                                        <li>☐ Create feedback collection mechanisms</li>
+                                        <li>☐ Develop preliminary AI governance guidelines</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white/10 rounded-lg p-4">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-bold">Days 61-90</span>
+                                        <h4 class="font-semibold">Evaluate & Plan</h4>
+                                    </div>
+                                    <ul class="space-y-2 text-sm text-blue-100 ml-14">
+                                        <li>☐ Assess pilot results and gather feedback</li>
+                                        <li>☐ Document lessons learned and best practices</li>
+                                        <li>☐ Present findings to leadership</li>
+                                        <li>☐ Develop roadmap for expansion</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resources -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">Recommended Resources</h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        </svg>
+                                        Reading
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-slate-600">
+                                        <li>• EDUCAUSE AI Resources</li>
+                                        <li>• Chronicle of Higher Ed AI Coverage</li>
+                                        <li>• "AI in Education" Research Reports</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        Communities
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-slate-600">
+                                        <li>• EDUCAUSE AI Community Group</li>
+                                        <li>• Higher Ed AI Discussion Forums</li>
+                                        <li>• Regional AI in Education Meetups</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
+                                        Learning
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-slate-600">
+                                        <li>• Coursera AI for Everyone Course</li>
+                                        <li>• LinkedIn Learning AI Paths</li>
+                                        <li>• Institutional AI Workshop Series</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <h4 class="font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                        </svg>
+                                        Tools to Try
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-slate-600">
+                                        <li>• ChatGPT / Claude (for exploration)</li>
+                                        <li>• Otter.ai (meeting transcription)</li>
+                                        <li>• Notion AI (document assistance)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Completion Message -->
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-8 text-white text-center mb-8">
+                            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">🎉 Course Complete!</h3>
+                            <p class="text-green-100 mb-6">You've completed all modules of "University Admin AI Training: GLM-4.7"</p>
+                            <div class="bg-white/20 rounded-lg p-4 inline-block">
+                                <p class="text-sm"><strong>Remember:</strong> AI is a journey, not a destination. Start small, learn continuously, and always keep your institution's values at the center of every decision.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificate Section -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">Certificate of Completion</h3>
+                                    <p class="text-sm text-slate-600">Download your certificate to share your achievement</p>
+                                </div>
+                            </div>
+                            
+                            <div id="certificate" class="border-4 border-double border-yellow-400 rounded-lg p-8 bg-gradient-to-br from-slate-50 to-slate-100 text-center mb-4">
+                                <div class="text-4xl mb-2">🎓</div>
+                                <h4 class="text-2xl font-serif font-bold text-slate-800 mb-1">Certificate of Completion</h4>
+                                <p class="text-slate-600 mb-4">This certifies that the recipient has completed</p>
+                                <p class="text-xl font-bold text-blue-600 mb-4">University Admin AI Training: GLM-4.7</p>
+                                <p class="text-sm text-slate-500">Powered by GLM-4.7 • 6 Modules</p>
+                            </div>
+                            
+                            <button onclick="window.print()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                </svg>
+                                Print / Save Certificate
+                            </button>
+                        </div>
+                    </div>
+                `,
+                quiz: {
+                    question: "What is the most important principle to remember when implementing AI at your institution?",
+                    options: [
+                        "Implement everything as quickly as possible",
+                        "Keep your institution's values at the center of every decision",
+                        "Copy what other universities are doing exactly",
+                        "Focus only on cost reduction"
+                    ],
+                    correct: 1,
+                    explanation: "While speed and learning from others are valuable, your institution's unique values and mission should guide all AI implementation decisions to ensure alignment with your educational goals."
+                }
+            }
+        ];
+        
+        /* ==========================================
+           STATE MANAGEMENT
+           Tracks current lesson, progress, and quiz scores
+           ========================================== */
+        
+        let currentLesson = 0;
+        let completedLessons = new Set();
+        let quizScores = {};
+        
+        /* ==========================================
+           INITIALIZATION
+           Runs when page loads
+           ========================================== */
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            loadLesson(0);
+            updateProgress();
+            
+            // Load saved progress from localStorage
+            loadProgress();
+        });
+        
+        /* ==========================================
+           NAVIGATION SYSTEM
+           Generates sidebar nav and handles navigation
+           ========================================== */
+        
+        function initializeNavigation() {
+            const navList = document.getElementById('navList');
+            navList.innerHTML = courseData.map((lesson, index) => `
+                <li>
+                    <button 
+                        onclick="loadLesson(${index})" 
+                        class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium transition-all ${index === currentLesson ? 'active' : 'text-slate-600 hover:bg-gray-100'}"
+                        data-index="${index}"
+                    >
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${lesson.icon}"/>
+                        </svg>
+                        <span class="flex-1 truncate">${lesson.title}</span>
+                        ${completedLessons.has(index) ? '<svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' : ''}
+                    </button>
+                </li>
+            `).join('');
+            
+            document.getElementById('totalLessons').textContent = courseData.length;
+        }
+        
+        function loadLesson(index) {
+            currentLesson = index;
+            const lesson = courseData[index];
+            
+            // Update content area
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = lesson.content;
+            
+            // Add quiz if exists
+            if (lesson.quiz) {
+                contentArea.innerHTML += createQuiz(lesson.quiz, index);
+            }
+            
+            // Mark lesson as viewed after 30 seconds
+            setTimeout(() => {
+                markLessonComplete(index);
+            }, 30000);
+            
+            // Update navigation state
+            updateNavigationState();
+            updateNavigationButtons();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Close mobile sidebar
+            closeSidebar();
+            
+            // Save progress
+            saveProgress();
+        }
+        
+        function navigateLesson(direction) {
+            const newIndex = currentLesson + direction;
+            if (newIndex >= 0 && newIndex < courseData.length) {
+                loadLesson(newIndex);
+            }
+        }
+        
+        function updateNavigationState() {
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                if (index === currentLesson) {
+                    item.classList.add('active');
+                    item.classList.remove('text-slate-600', 'hover:bg-gray-100');
+                } else {
+                    item.classList.remove('active');
+                    item.classList.add('text-slate-600', 'hover:bg-gray-100');
+                }
+            });
+        }
+        
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentLesson === 0;
+            
+            if (currentLesson === courseData.length - 1) {
+                nextBtn.innerHTML = `
+                    <span>Course Complete</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                `;
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.innerHTML = `
+                    <span>Next Lesson</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                `;
+                nextBtn.disabled = false;
+            }
+        }
+        
+        /* ==========================================
+           PROGRESS TRACKING
+           Handles lesson completion and progress bar
+           ========================================== */
+        
+        function markLessonComplete(index) {
+            completedLessons.add(index);
+            updateProgress();
+            initializeNavigation();
+            saveProgress();
+        }
+        
+        function updateProgress() {
+            const total = courseData.length;
+            const completed = completedLessons.size;
+            const percentage = Math.round((completed / total) * 100);
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressPercent').textContent = percentage + '%';
+            document.getElementById('completedLessons').textContent = completed;
+        }
+        
+        /* ==========================================
+           QUIZ SYSTEM
+           Creates and handles interactive quizzes
+           ========================================== */
+        
+        function createQuiz(quiz, lessonIndex) {
+            return `
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mt-8" id="quiz-${lessonIndex}">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Knowledge Check</h3>
+                            <p class="text-sm text-slate-500">Test your understanding of this lesson</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-slate-700 mb-4 font-medium">${quiz.question}</p>
+                    
+                    <div class="space-y-3 mb-6" id="quiz-options-${lessonIndex}">
+                        ${quiz.options.map((option, optIndex) => `
+                            <button 
+                                onclick="selectQuizOption(${lessonIndex}, ${optIndex}, ${quiz.correct})"
+                                class="quiz-option w-full text-left p-4 border-2 border-gray-200 rounded-lg transition-all"
+                                data-option="${optIndex}"
+                            >
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-600 text-sm font-medium mr-3">${String.fromCharCode(65 + optIndex)}</span>
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                    
+                    <div id="quiz-feedback-${lessonIndex}" class="hidden">
+                        <div class="p-4 rounded-lg mb-4" id="feedback-content-${lessonIndex}"></div>
+                        <button 
+                            onclick="markLessonComplete(${lessonIndex})" 
+                            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                        >
+                            Mark Lesson Complete
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function selectQuizOption(lessonIndex, selectedOption, correctOption) {
+            const quizContainer = document.getElementById(`quiz-${lessonIndex}`);
+            const options = quizContainer.querySelectorAll('.quiz-option');
+            const feedbackContainer = document.getElementById(`quiz-feedback-${lessonIndex}`);
+            const feedbackContent = document.getElementById(`feedback-content-${lessonIndex}`);
+            const lesson = courseData[lessonIndex];
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.classList.add('disabled');
+                opt.onclick = null;
+            });
+            
+            // Highlight selected option
+            const selectedEl = options[selectedOption];
+            const correctEl = options[correctOption];
+            
+            if (selectedOption === correctOption) {
+                selectedEl.classList.add('correct');
+                feedbackContent.className = 'p-4 rounded-lg mb-4 bg-green-50 border border-green-200';
+                feedbackContent.innerHTML = `
+                    <div class="flex items-center gap-2 text-green-800 font-semibold mb-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Correct!
+                    </div>
+                    <p class="text-green-700 text-sm">${lesson.quiz.explanation}</p>
+                `;
+                quizScores[lessonIndex] = true;
+            } else {
+                selectedEl.classList.add('incorrect');
+                correctEl.classList.add('correct');
+                feedbackContent.className = 'p-4 rounded-lg mb-4 bg-amber-50 border border-amber-200';
+                feedbackContent.innerHTML = `
+                    <div class="flex items-center gap-2 text-amber-800 font-semibold mb-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Not quite right
+                    </div>
+                    <p class="text-amber-700 text-sm">${lesson.quiz.explanation}</p>
+                `;
+                quizScores[lessonIndex] = false;
+            }
+            
+            feedbackContainer.classList.remove('hidden');
+            saveProgress();
+        }
+        
+        /* ==========================================
+           UI COMPONENTS
+           Accordion, sidebar, and mobile menu
+           ========================================== */
+        
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.accordion-icon');
+            
+            content.classList.toggle('open');
+            icon.classList.toggle('rotate-180');
+        }
+        
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.remove('hidden');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+        
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        
+        /* ==========================================
+           LOCAL STORAGE
+           Save and load user progress
+           ========================================== */
+        
+        function saveProgress() {
+            const progress = {
+                completedLessons: Array.from(completedLessons),
+                currentLesson: currentLesson,
+                quizScores: quizScores
+            };
+            localStorage.setItem('aiCourseProgress', JSON.stringify(progress));
+        }
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('aiCourseProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                completedLessons = new Set(progress.completedLessons || []);
+                currentLesson = progress.currentLesson || 0;
+                quizScores = progress.quizScores || {};
+                
+                loadLesson(currentLesson);
+                updateProgress();
+            }
+        }
+    </script>
+</body>
+</html>

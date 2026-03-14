@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Prompting: Gemini 3 Pro LMC Edition | Center for Applied AI</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Brand Colors - Consistent with previous design */
+            --primary-dark: #0f172a;   /* Slate 900 */
+            --primary: #1e293b;        /* Slate 800 */
+            --accent: #0ea5e9;         /* Sky 500 */
+            --accent-hover: #0284c7;
+            --accent-glow: rgba(14, 165, 233, 0.3);
+            --success: #10b981;        /* Emerald 500 */
+            --warning: #f59e0b;        /* Amber 500 */
+            --text-main: #334155;
+            --text-light: #64748b;
+            --bg-body: #f8fafc;
+            
+            /* Spacing & Radius */
+            --card-radius: 12px;
+            --btn-radius: 6px;
+            
+            /* Fonts */
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Sidebar Navigation (Timeline Style) --- */
+        .sidebar {
+            width: 300px;
+            background: var(--primary-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+        }
+
+        .brand {
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            line-height: 1.2;
+        }
+        .brand span { color: var(--accent); display: block; font-size: 0.9rem; font-family: var(--font-body); letter-spacing: 1px; text-transform: uppercase; margin-top: 5px;}
+
+        .nav-timeline {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Timeline vertical line */
+        .nav-timeline::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 20px;
+            bottom: 40px;
+            width: 1px;
+            background: rgba(255,255,255,0.15);
+            z-index: 0;
+        }
+
+        .nav-item {
+            position: relative;
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: var(--btn-radius);
+            margin-bottom: 0.2rem;
+            color: #94a3b8;
+            z-index: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Timeline Dot */
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 9px;
+            height: 9px;
+            background: var(--primary-dark);
+            border: 2px solid #64748b;
+            border-radius: 50%;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.03); }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.1), transparent);
+            color: white;
+            font-weight: 500;
+        }
+        .nav-item.active::before {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        /* --- Main Content --- */
+        .main-wrapper {
+            margin-left: 300px;
+            flex: 1;
+            padding: 4rem 5rem;
+            max-width: 1200px;
+        }
+
+        .module-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .module-container.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Typography --- */
+        h1 {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            color: var(--primary);
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            color: var(--primary);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 { color: var(--text-main); margin-top: 1.5rem; font-weight: 600; }
+        
+        p { font-size: 1.05rem; line-height: 1.7; color: var(--text-main); margin-bottom: 1.5rem; }
+
+        .tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Components --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }
+        
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+
+        /* Code/Prompt Blocks */
+        .code-window {
+            background: #282c34;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            color: #abb2bf;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+        
+        .code-header {
+            background: #21252b;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e4451;
+        }
+        
+        .window-dots { display: flex; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #5c6370; }
+        .dot.red { background: #e06c75; }
+        .dot.yellow { background: #d19a66; }
+        .dot.green { background: #98c379; }
+
+        .code-content { padding: 1.5rem; white-space: pre-wrap; line-height: 1.6; }
+        .code-hl { color: var(--accent); font-weight: bold; } /* Highlight */
+        .code-var { color: var(--warning); } /* Variable */
+        
+        /* Interactive Tools */
+        .tool-panel {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            padding: 2rem;
+            border-radius: var(--card-radius);
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--btn-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-accent { background: var(--accent); }
+        .btn-accent:hover { background: var(--accent-hover); }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--btn-radius);
+            font-family: var(--font-mono);
+            margin: 1rem 0;
+            min-height: 100px;
+        }
+        textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+        /* Resource Links */
+        .resource-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--btn-radius);
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .resource-link:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 1rem; flex-direction: row; align-items: center; overflow-x: auto; white-space: nowrap; }
+            .nav-timeline { flex-direction: row; gap: 10px; }
+            .nav-timeline::before { display: none; }
+            .nav-item { padding: 0.5rem 1rem; margin: 0; }
+            .nav-item::before { display: none; }
+            .main-wrapper { margin-left: 0; padding: 2rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .brand { margin-bottom: 0; margin-right: 20px; }
+            .brand span { display: inline; margin-left: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <a href="https://www.centerforappliedai.com" target="_blank" class="brand">
+            Center for<span>Applied AI</span>
+        </a>
+        
+        <div class="nav-timeline" id="nav-container">
+            <!-- JS Injection -->
+        </div>
+
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: #64748b;">
+            Advanced Track<br>
+            v2.4 Updated for Gemini 3 Pro LMC
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="main-wrapper">
+
+        <!-- INTRO -->
+        <div id="mod-intro" class="module-container active">
+            <span class="tag">Overview</span>
+            <h1>The Evolving Art of Prompting</h1>
+            <p class="lead" style="font-size: 1.2rem; color: var(--text-light);">
+                Prompt engineering is shifting from "magic spells" to <strong>systems engineering</strong>. It is no longer about tricking the model, but about providing clear, structured context and constraints.
+            </p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Guiding Principles</h3>
+                    <ul>
+                        <li><strong>Context > Capability:</strong> Models are smart enough; they usually fail because they lack context, not intelligence.</li>
+                        <li><strong>Structure is King:</strong> Use XML tags, Markdown, or JSON schemas to separate instructions from data.</li>
+                        <li><strong>Iteration:</strong> The first prompt is never the final prompt.</li>
+                    </ul>
+                </div>
+                <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white;">
+                    <h3 style="color:white">The Goal</h3>
+                    <p style="opacity: 0.9">To move from "Chatting" to "Programmatic Control".</p>
+                    <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        Target: Intermediate/Advanced<br>
+                        Prerequisite: Basic Chat familiarity
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-accent" onclick="loadModule('mod-1')">Begin: Structural Strategies →</button>
+        </div>
+
+        <!-- MODULE 1: Strategies -->
+        <div id="mod-1" class="module-container">
+            <span class="tag">Strategy</span>
+            <h1>Structural Frameworks</h1>
+            <p>Advanced prompting requires breaking tasks down. We use mental models to guide the AI's reasoning process.</p>
+
+            <h2>1. Few-Shot Prompting</h2>
+            <p>Providing examples (shots) inside the prompt to guide the style and format of the output.</p>
+            
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="window-dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <span>few-shot-example.txt</span>
+                </div>
+                <div class="code-content">Task: Classify customer sentiment.
+
+<span class="code-hl">Example 1:</span>
+Input: "I waited 30 minutes and the food was cold."
+Output: Negative // Speed, Quality
+
+<span class="code-hl">Example 2:</span>
+Input: "Great service, but a bit pricey."
+Output: Mixed // Service, Price
+
+Input: "The interface is intuitive and fast."
+Output:</div>
+            </div>
+
+            <h2>2. Chain of Thought (CoT)</h2>
+            <p>Forcing the model to "show its work" before giving a final answer. This drastically reduces logic errors and hallucinations.</p>
+            <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
+                <strong>The "Magic" Phrase:</strong><br>
+                <em>"Take a deep breath and think step-by-step."</em> <br>
+                (Or structurally: "Output your reasoning in a &lt;thinking&gt; tag before your final answer.")
+            </div>
+        </div>
+
+        <!-- MODULE 2: Meta Prompting -->
+        <div id="mod-2" class="module-container">
+            <span class="tag">Advanced Technique</span>
+            <h1>Meta-Prompting & Improvers</h1>
+            <p>The best prompt engineer is often the AI itself. <strong>Meta-prompting</strong> involves asking an AI to write or improve a prompt for another AI.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>The Concept</h3>
+                    <p>Instead of struggling to find the right words, describe your *intent* to the AI and ask it to generate the optimal system instructions.</p>
+                </div>
+                <div class="card">
+                    <h3>The Workflow</h3>
+                    <ol>
+                        <li>Draft a basic request.</li>
+                        <li>Feed it to a "Prompt Improver".</li>
+                        <li>Use the improved prompt for the actual task.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <h2>Interactive: The Prompt Improver</h2>
+            <div class="tool-panel">
+                <p><strong>Try it:</strong> Enter a basic task below (e.g., "Write a blog about coffee").</p>
+                <textarea id="user-input" placeholder="Enter a simple task here..."></textarea>
+                <button class="btn btn-accent" onclick="runMetaPrompt()">✨ Generate Advanced Prompt</button>
+                
+                <div id="meta-output" class="code-window" style="display:none; text-align: left; margin-top: 1rem;">
+                    <div class="code-header"><span>Optimized System Instruction</span></div>
+                    <div class="code-content" id="meta-text"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 3: Systemic Prompting -->
+        <div id="mod-3" class="module-container">
+            <span class="tag">Architecture</span>
+            <h1>Systemic Prompting & Delimiters</h1>
+            <p>As prompts get longer, AI models get confused about which part is instruction and which part is data. We use <strong>Delimiters</strong> to solve this.</p>
+
+            <h2>Using XML Tags</h2>
+            <p>Modern models (Gemini 3 Pro LMC, Claude 3.5, GPT-4) are trained to recognize XML-style tags as structural boundaries.</p>
+
+            <div class="code-window">
+                <div class="code-header"><span>system-prompt.md</span></div>
+                <div class="code-content">You are a financial analyst. Analyze the data provided in the <span class="code-hl">&lt;data&gt;</span> tags. 
+Follow the criteria in the <span class="code-hl">&lt;criteria&gt;</span> tags.
+
+<span class="code-hl">&lt;criteria&gt;</span>
+- Focus on ROI and EBITDA.
+- Be concise.
+<span class="code-hl">&lt;/criteria&gt;</span>
+
+<span class="code-hl">&lt;data&gt;</span>
+[Paste messy CSV data here]
+<span class="code-hl">&lt;/data&gt;</span></div>
+            </div>
+
+            <h2>Role-Based Persona</h2>
+            <p>Don't just say "You are an expert." Be specific. Use the <strong>CO-STAR</strong> method:</p>
+            <ul style="line-height: 1.8;">
+                <li><strong>C</strong>ontext (Background info)</li>
+                <li><strong>O</strong>bjective (What needs to be done)</li>
+                <li><strong>S</strong>tyle (Tone, voice)</li>
+                <li><strong>T</strong>one (Emotional resonance)</li>
+                <li><strong>A</strong>udience (Who is reading)</li>
+                <li><strong>R</strong>esponse Format (JSON, Markdown, Table)</li>
+            </ul>
+        </div>
+
+        <!-- MODULE 4: Resources -->
+        <div id="mod-4" class="module-container">
+            <span class="tag">Library</span>
+            <h1>Resources & Further Learning</h1>
+            <p>Prompting moves fast. Rely on documentation from the model builders.</p>
+
+            <h2>Official Documentation</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="#" class="resource-link">
+                    <span>OpenAI Prompt Engineering Guide</span>
+                    <span>↗</span>
+                </a>
+                <a href="#" class="resource-link">
+                    <span>Anthropic: Prompt Library (Claude)</span>
+                    <span>↗</span>
+                </a>
+                <a href="#" class="resource-link">
+                    <span>Learn Prompting (Open Source Course)</span>
+                    <span>↗</span>
+                </a>
+            </div>
+
+            <h2>Center for Applied AI</h2>
+            <div class="card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">
+                <h3>Continue your journey</h3>
+                <p>We provide workshops, certification, and consulting for enterprises integrating GenAI.</p>
+                <a href="https://www.centerforappliedai.com" target="_blank" class="btn btn-accent">Visit Our Website</a>
+            </div>
+        </div>
+
+    </main>
+
+<script>
+    // --- Data ---
+    const modules = [
+        { id: 'mod-intro', title: 'Start Here' },
+        { id: 'mod-1', title: '1. Structural Strategies' },
+        { id: 'mod-2', title: '2. Meta-Prompting' },
+        { id: 'mod-3', title: '3. Systemic Prompting' },
+        { id: 'mod-4', title: '4. Resources' }
+    ];
+
+    // --- Init ---
+    function init() {
+        const nav = document.getElementById('nav-container');
+        
+        nav.innerHTML = modules.map((m, index) => `
+            <div class="nav-item ${index === 0 ? 'active' : ''}" 
+                 id="nav-${m.id}" 
+                 onclick="loadModule('${m.id}')">
+                ${m.title}
+            </div>
+        `).join('');
+
+        // Ensure intro is visible
+        loadModule('mod-intro');
+    }
+
+    // --- Navigation Logic ---
+    function loadModule(id) {
+        // Hide all
+        document.querySelectorAll('.module-container').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+        // Show specific
+        const target = document.getElementById(id);
+        const navTarget = document.getElementById(`nav-${id}`);
+
+        if(target && navTarget) {
+            target.classList.add('active');
+            navTarget.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // --- Meta Prompt Simulator ---
+    function runMetaPrompt() {
+        const input = document.getElementById('user-input').value;
+        const outputBox = document.getElementById('meta-output');
+        const outputText = document.getElementById('meta-text');
+        
+        if(input.length < 3) {
+            alert("Please enter a task first.");
+            return;
+        }
+
+        // Simulate "Thinking"
+        outputText.innerText = "Analyzing intent...\nGenerating constraints...\nOptimizing structure...";
+        outputBox.style.display = 'block';
+
+        setTimeout(() => {
+            // A simple templating logic to mimic a meta-prompter result
+            const result = `You are an expert content strategist and domain authority.
+
+<context>
+The user requires completion of the following task: "${input}".
+</context>
+
+<objective>
+Produce a high-quality, comprehensive output that addresses the user's core intent. Avoid superficial fluff.
+</objective>
+
+<constraints>
+1. Use clear, professional language.
+2. Structure the response with H2 headers and bullet points.
+3. If the topic is technical, define key terms.
+4. Output Format: Markdown.
+</constraints>
+
+<style>
+Tone: Authoritative yet accessible.
+Voice: Active.
+</style>
+
+Take a deep breath, plan the structure in <thinking> tags, and then execute.`;
+
+            outputText.innerText = result;
+        }, 800);
+    }
+
+    // Start
+    init();
+
+</script>
+</body>
+</html>
