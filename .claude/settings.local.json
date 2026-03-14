@@ -9,7 +9,9 @@
       "Bash(pwsh -Command \"\\(Get-Content 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages\\\\AI for Univ  Admins Gemini 3 pro  via LMA.html' -Raw\\) -split 'USU Guide' | Measure-Object | Select-Object -ExpandProperty Count\")",
       "Bash(pwsh)",
       "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git init\")",
-      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git add .\")"
+      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git add .\")",
+      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; git commit -m 'Initial commit: AI Training Course Catalog\n\n- Add launch page with course catalog and feedback system\n- Include 11 AI training courses for university administrators\n- Add README and CLAUDE.md documentation\n- Brand as Center for Applied AI \\(www.CenterForAppliedAI.com\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>'\")",
+      "Bash(pwsh -Command \"cd 'C:\\\\Users\\\\toddw\\\\OneDrive\\\\Dev_Projects\\\\spa-ai-training-pages'; gh repo create spa-ai-training-pages --public --source=. --push\")"
     ]
   }
 }
