@@ -201,8 +201,8 @@
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">University Admin AI Training: Mimo V2 Flash</h1>
                 <p class="text-xl mb-6 opacity-90">Powered by Mimo V2 Flash</p>
                 <div class="flex flex-wrap justify-center gap-4">
-                    <button onclick="showSection('getting-started')" class="bg-gold text-white px-6 py-3 rounded-lg font-bold hover:opacity-90">Start Learning</button>
-                    <button onclick="showSection('quiz')" class="bg-white text-navy px-6 py-3 rounded-lg font-bold hover:bg-gray-100">Take Quiz</button>
+                    <button onclick="showSection('getting-started')" class="gold-bg text-white px-6 py-3 rounded-lg font-bold hover:opacity-90" style="background-color: #B8860B;">Start Learning</button>
+                    <button onclick="showSection('quiz')" class="bg-white navy-text px-6 py-3 rounded-lg font-bold hover:bg-gray-100" style="color: #002B5B;">Take Quiz</button>
                 </div>
             </div>
         </div>
@@ -981,23 +981,23 @@ Format: Policy document that's accessible to non-technical users. Use plain lang
                 </div>
 
                 <!-- Results Container (hidden initially) -->
-                <div id="resultsContainer" class="hidden mt-8 p-6 bg-gradient-to-r from-navy to-blue-800 text-white rounded-lg">
+                <div id="resultsContainer" class="hidden mt-8 p-6 text-white rounded-lg" style="background: linear-gradient(to right, #002B5B, #1e40af);">
                     <h3 class="text-2xl font-bold mb-4">Quiz Results</h3>
                     <div class="text-5xl font-bold mb-4" id="scoreDisplay">0%</div>
                     <p class="mb-4" id="scoreMessage"></p>
                     <div id="resultsDetails" class="text-sm opacity-90 mb-4"></div>
-                    <button onclick="resetQuiz()" class="bg-gold text-white px-6 py-3 rounded-lg font-bold hover:opacity-90">Retake Quiz</button>
+                    <button onclick="resetQuiz()" class="text-white px-6 py-3 rounded-lg font-bold hover:opacity-90" style="background-color: #B8860B;">Retake Quiz</button>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="mt-6 text-center">
-                    <button id="submitQuizBtn" onclick="submitQuiz()" class="bg-navy text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-900 hidden">Submit Quiz</button>
-                    <button id="startQuizBtn" onclick="startQuiz()" class="bg-gold text-white px-8 py-3 rounded-lg font-bold hover:opacity-90">Start Quiz</button>
+                    <button id="submitQuizBtn" onclick="submitQuiz()" class="navy-bg text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 hidden" style="background-color: #002B5B;">Submit Quiz</button>
+                    <button id="startQuizBtn" onclick="startQuiz()" class="text-white px-8 py-3 rounded-lg font-bold hover:opacity-90" style="background-color: #B8860B;">Start Quiz</button>
                 </div>
             </div>
 
             <!-- Certificate Section (hidden until passed) -->
-            <div id="certificateSection" class="hidden card p-8 text-center bg-gradient-to-r from-gold to-yellow-600 text-white">
+            <div id="certificateSection" class="hidden card p-8 text-center text-white" style="background: linear-gradient(to right, #B8860B, #d97706);">
                 <h2 class="text-3xl font-bold mb-4">🎓 Congratulations!</h2>
                 <p class="text-xl mb-4">You've successfully completed the course!</p>
                 <div class="bg-white text-navy p-6 rounded-lg mb-4">
